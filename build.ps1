@@ -1,7 +1,7 @@
-echo "Running npm install" 
+echo "Running pnpm install" 
 
 pushd src/Hosted
-npm install
+pnpm install
 popd
 
 echo "Running dotnet build"

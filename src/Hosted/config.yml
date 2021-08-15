@@ -1,7 +1,8 @@
-serverUrl: http://mywebsite.com
-shortTitle: My Blog
-title: My F# Blog
-description: My ramblings and experiences with building stuff with F#
-masterUserDisplayName: My Name
+serverUrl: https://blog.tunaxor.me
+shortTitle: Tunaxor's Blog
+title: Tunaxor's Blog
+description: My Experiences on F#/JS and maybe other stuff as well
+masterUserDisplayName: Angel D. Munoz
 masterLanguage: en
-languages: "en->English,es->Spanish,hu->Hungarian"
+languages: "en->English,es->Spanish"
+users: "angelmunoz -> Angel D. Munoz"

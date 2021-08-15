@@ -4,10 +4,10 @@ echo "Installing dotnet-serve"
 
 dotnet tool install dotnet-serve --tool-path .tools
 
-echo "Running npm install"
+echo "Running pnpm install"
 
 pushd src/Hosted
-npm install
+pnpm install
 popd
 
 echo "Running dotnet build"

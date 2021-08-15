@@ -2,9 +2,9 @@ param(
     [switch] $buildOnly
 )
 
-# Install npm packages
+# Install pnpm packages
 pushd src\Hosted
-npm install
+pnpm install
 popd
 
 if (!$buildOnly) {
