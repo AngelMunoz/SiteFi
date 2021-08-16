@@ -23,7 +23,7 @@ Hoy hablaremos acerca de como podemos producir cadenas de texto que contienen HT
 - [Feliz.ViewEngine]
 - [Scriban]
 
-Los primeros dos son <abbr title="Domain Specific Language">DSL</abbr>'s para construir HTML, el ultimo es un lenguaje de scripting para .NET (aunque tambien existe [Giragge.Razor] pero el dia de hoy no lo mencionare)
+Los primeros dos son <abbr title="Domain Specific Language">DSL</abbr>'s para construir HTML, el ultimo es un lenguaje de scripting para .NET (aunque tambien existe [Giraffe.Razor] pero el dia de hoy no lo mencionare)
 
 ### Giraffe
 
