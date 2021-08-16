@@ -88,7 +88,7 @@ module Urls =
             sprintf "/user"
         else
             sprintf "/user/%s" user
-    let LANG (lang: string) = sprintf "/%s" lang
+    let LANG (lang: string) = sprintf "/%s.html" lang
 
 module Helpers =
     open System.IO
