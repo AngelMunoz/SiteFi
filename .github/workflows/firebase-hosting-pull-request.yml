@@ -14,8 +14,7 @@ jobs:
         with:
           dotnet-version: '6.0.x'
           include-prerelease: true
-      - run: build.sh
-      - run: build.sh
+      - run: ./build.sh
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
