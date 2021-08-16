@@ -20,8 +20,6 @@
     <ExtraFiles Include="../Hosted/img/**" linkBase="img" />
     <ExtraFiles Include="../Hosted/css/**"  linkBase="css" />
     <ExtraFiles Include="../Hosted/js/**" linkBase="js" />
-    <ExtraFiles Include="../Hosted/node_modules/**" linkBase="node_modules" />
-    <ExtraFiles Include="../Hosted/scss/**" linkBase="scss" />
   </ItemGroup>
 
   <Target Name="CopyFiles" AfterTargets="Build">
