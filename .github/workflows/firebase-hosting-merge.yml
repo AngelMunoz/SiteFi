@@ -16,7 +16,9 @@ jobs:
         with:
           dotnet-version: '6.0.x'
           include-prerelease: true
-      - run: ./build.sh
+      - run: npm i -g pnpm
+      - run: cd src/Hosted && pnpm i
+      - run: dotnet build SiteFi.sln
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
