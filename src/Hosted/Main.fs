@@ -75,20 +75,20 @@ module Yaml =
 module Urls =
     let CATEGORY (cat: string) lang =
         if String.IsNullOrEmpty lang then
-            sprintf "/category/%s" cat
+            sprintf "/category/%s.html" cat
         else
-            sprintf "/category/%s/%s" cat lang
+            sprintf "/category/%s/%s.html" cat lang
     let POST_URL (user: string, slug: string) =
         if String.IsNullOrEmpty user then
             sprintf "/blog/%s.html" slug
         else
-            sprintf "/user/%s/%s" user slug
+            sprintf "/user/%s/%s.html" user slug
     let USER_URL user =
         if String.IsNullOrEmpty user then
-            sprintf "/user"
+            sprintf "/user.html"
         else
-            sprintf "/user/%s" user
-    let LANG (lang: string) = sprintf "/%s" lang
+            sprintf "/user/%s.html" user
+    let LANG (lang: string) = sprintf "/%s" (if lang <> "" then (sprintf "%s.html" lang) else "")
 
 module Helpers =
     open System.IO
