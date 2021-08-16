@@ -88,7 +88,7 @@ module Urls =
             sprintf "/user"
         else
             sprintf "/user/%s" user
-    let LANG (lang: string) = sprintf "/%s.html" lang
+    let LANG (lang: string) = sprintf "/%s" lang
 
 module Helpers =
     open System.IO
@@ -177,7 +177,7 @@ module Site =
 
     /// Zero out if article has the master language
     let URL_LANG (config: Config) lang =
-        if config.MasterLanguage = lang then "" else lang
+        if config.MasterLanguage = lang then "" else (sprintf "%s.html" lang)
 
     let ReadConfig() =
         let KEY_VALUE_LIST whatFor ss =
