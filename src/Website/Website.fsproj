@@ -20,6 +20,7 @@
     <ExtraFiles Include="../Hosted/img/**" linkBase="img" />
     <ExtraFiles Include="../Hosted/css/**"  linkBase="css" />
     <ExtraFiles Include="../Hosted/js/**" linkBase="js" />
+    <ExtraFiles Include="./manifest.webmanifest" linkBase="./" />
   </ItemGroup>
 
   <Target Name="CopyFiles" AfterTargets="Build">

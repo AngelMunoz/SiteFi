@@ -1,0 +1,19 @@
+{
+    "name": "Tunaxor's Blog",
+    "short_name": "Tunaxor's Blog",
+    "start_url": "/",
+    "display": "standalone",
+    "icons": [],
+    "background_color": "transparent",
+    "theme_color": "transparent",
+    "orientation": "portrait",
+    "lang": "en-GB",
+    "shortcuts": [
+        {
+            "name": "Posts en español",
+            "url": "/es.html",
+            "description": "Los posts existentes escritos en español",
+            "short_name": "Entradas"
+        }
+    ]
+}

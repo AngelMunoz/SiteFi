@@ -368,8 +368,6 @@ Ahora, toma en cuenta que en este caso usamos F# para pre-procesar el template a
 
 Ahora, ten en cuenta de que si lo necesitas, puedes pasar multiples fragmentos de HTML en cadenas de texto y hacer una especie de layout (como en los patrones MVC) y renderizar todo al final, aunque no me consta que tanto pueda incurrir en el desenoeño (aunque Scriban en su github dicen que son extremadamente veloces)
 
-## Closing Thoughts
+## Y Para Cerrar...
 
 Asi que ahi lo tienen! HTML en F#, facil y sencillo no? espero que les haya sido de utilidad, quiza pueden usar esto para alguna utilidad de consola para convertir JSON a HTML! o quiza para el proximo reporte de las ventas del año pasado o algun otro caso de uso similar.
-
-Si tienes dudas o preguntas, buscame en [Twitter](https://twitter.com/angel_d_munoz)!
