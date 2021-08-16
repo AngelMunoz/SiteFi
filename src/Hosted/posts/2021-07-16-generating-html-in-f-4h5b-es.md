@@ -15,7 +15,7 @@ language: es
 
 ## Cosas simples en fsharp
 
-Hola!, esta es la cuarta entrada en "Cosas simples en F#"
+Hola! esta es la cuarta entrada en "Cosas simples en F#"
 
 Hoy hablaremos acerca de como podemos producir cadenas de texto que contienen HTML en F# (utiles para reportes, pdfs o similares). Producir HTML en F# es muy sencillo para ser honesto, hay muchas librerias que te permiten hacerlo, hablaremos de algunas que he usado con anterioridad.
 
