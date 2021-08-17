@@ -45,6 +45,9 @@ module Markdown =
             .UseEmojiAndSmiley()
             .UseYamlFrontMatter()
             .UseAdvancedExtensions()
+            .UseAutoIdentifiers()
+            .UsePreciseSourceLocation()
+            .UseSmartyPants()
             .Build()
 
     let Convert content = Markdown.ToHtml(content, pipeline)
