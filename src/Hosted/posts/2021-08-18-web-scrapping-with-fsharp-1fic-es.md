@@ -46,7 +46,7 @@ dotnet tool install --global Microsoft.Playwright.CLI
 Una vez instalado podemos iniciar con un proyecto de consola de la siguiente manera
 
 ```powershell
-# feel free to use VB o C# si asi lo prefieres
+# tambien puedes usar VB o C# si asi lo prefieres, este post se concentrara en F#
 dotnet new console -lang F# -o Escalin
 ```
 En este caso cree un proyecto llamado `Escalin` una vez creado el proyecto vamos a instalar las siguientes dependencias
