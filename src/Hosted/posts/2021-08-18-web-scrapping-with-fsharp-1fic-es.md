@@ -46,7 +46,7 @@ dotnet tool install --global Microsoft.Playwright.CLI
 Una vez instalado podemos iniciar con un proyecto de consola de la siguiente manera
 
 ```powershell
-# tambien puedes usar VB o C# si asi lo prefieres, este post se concentrara en F#
+# tambien puedes usar VB o C# si asi lo prefieres
 dotnet new console -lang F# -o Escalin
 ```
 En este caso cree un proyecto llamado `Escalin` una vez creado el proyecto vamos a instalar las siguientes dependencias
@@ -55,7 +55,13 @@ En este caso cree un proyecto llamado `Escalin` una vez creado el proyecto vamos
 cd Escalin
 dotnet add package Microsoft.Playwright
 dotnet add package Ply
+dotnet build
+# esta linea es para instalar los navegadores que usara playwright
+# si ya los has instalado antes por algun otro medio lo puedes omitir
+playwright install
 ```
+
+> ***SCRIPTING***: Puedes usar playwright con scripts de F# pero es necesario que hayas instalado previamente los navegadores, ya sea que hayas creado un proyecto dummy con los pasos de arriba o usado la herramienta de npm de playwright para hacerlo
 
 Una vez agregadas nuestras dependencias podemos abrir el codigo en vscode con [Ionide], [Rider] o [Visual Studio].
 
