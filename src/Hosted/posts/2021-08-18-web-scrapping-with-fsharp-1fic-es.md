@@ -8,11 +8,12 @@ language: es
 ---
 
 [Playwright]: https://playwright.dev/dotnet/
-[.NET SDK]: https://
-[Ionide]: https://
-[Rider]: https://
-[Visual Studio]: https://
-[Task]: https://
+[.NET SDK]: https://dotnet.microsoft.com/download
+[Ionide]: https://ionide.io/
+[Rider]: https://www.jetbrains.com/rider/
+[Visual Studio]: https://visualstudio.microsoft.com/vs/community/
+[Task]: https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task?view=net-5.0
+[Async]: https://docs.microsoft.com/en-us/dotnet/fsharp/tutorials/asynchronous-and-concurrent-programming/async
 
 > ***NOTA***: El conenido de este post esta basado en este proyecto
 >
