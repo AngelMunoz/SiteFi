@@ -8,7 +8,7 @@
     ],
     "headers": [
       {
-        "source": "**/feed.(rss|atom)",
+        "source": "**/*.@(rss|atom)",
         "headers": [
           {
             "key": "Access-Control-Allow-Origin",
