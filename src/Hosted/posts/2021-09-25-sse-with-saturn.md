@@ -7,11 +7,11 @@ date: 2021-09-18
 language: en
 ---
 
-[saturn]: https://
-[giraffe]: https://
-[perla]: https://
-[skypack]: https://
-[import maps]: https://
+[saturn]: https://saturnframework.org/
+[giraffe]: https://giraffe.wiki/
+[perla]: https://github.com/AngelMunoz/Perla
+[skypack]: https://skypack.dev
+[import maps]: https://github.com/WICG/import-maps
 
 For this week's F# content I've have some server side stuff. I spend most of my days writing frontend code either for a living or for entretainment but sometimes I go to the server or CLI stuff as well.
 
