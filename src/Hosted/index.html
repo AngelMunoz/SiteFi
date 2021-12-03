@@ -284,6 +284,23 @@
       </div>
     </footer>
     <script src="/js/Client${ReleaseMin}.js"></script>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-analytics.js";
+      const firebaseConfig = {
+        apiKey: "AIzaSyBbcgi-lotWX776JmH87ClZs8qR1tbYqCI",
+        authDomain: "tunaxors-blog.firebaseapp.com",
+        projectId: "tunaxors-blog",
+        storageBucket: "tunaxors-blog.appspot.com",
+        messagingSenderId: "390910949860",
+        appId: "1:390910949860:web:904f98fcf6a84625c3aff1",
+        measurementId: "G-D5312749G3",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+    </script>
     <script
       defer
       src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"
