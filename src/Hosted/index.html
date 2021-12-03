@@ -1,190 +1,301 @@
 ﻿<!DOCTYPE html>
 <html lang="${Language}">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>${Title}Tunaxor's Blog</title>
-  <meta name="description" content="An F# and Javascript developer blog by Angel D. Munoz">
-  <meta name="keywords" content="fsharp dotnet javascript typescript frontend software development desktop backend server">
-  <meta ws-replace="meta" />
-  <link href="/manifest.webmanifest" rel="manifest" />
-  <link rel="stylesheet" href="/css/all${ReleaseMin}.css" />
-  <script ws-replace="Head"></script>
-</head>
-<body>
-  <header class="navbar ${NavbarOverlay} is-dark">
-    <div class="container">
-      <div class="navbar-brand">
-        <a class="navbar-item is-hoverable" onclick="Client.Bulma.ToggleDrawer()"><i class="fa fa-bars"></i></a>
-        <a href="/" class="navbar-item">${ShortTitle}</a>
-      </div>
-      <div class="navbar-menu">
-        <nav class="navbar-start" ws-hole="TopMenu">
-          <a ws-template="TopMenuItem" href="${Url}" class="navbar-item is-hoverable ">${Text}</a>
-          <div ws-template="TopMenuItemWithDropdown" class="navbar-item is-hoverable has-dropdown">
-            <a class="navbar-link">${Text}</a>
-            <div class="navbar-dropdown" ws-hole="DropdownItems">
-              <a ws-template="TopMenuDropdownItem" class="navbar-item" href="${Url}">${Text}</a>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>${Title}Tunaxor's Blog</title>
+    <meta
+      name="description"
+      content="An F# and Javascript developer blog by Angel D. Munoz"
+    />
+    <meta
+      name="keywords"
+      content="fsharp dotnet javascript typescript frontend software development desktop backend server"
+    />
+    <meta ws-replace="meta" />
+    <link href="/manifest.webmanifest" rel="manifest" />
+    <link rel="stylesheet" href="/css/all${ReleaseMin}.css" />
+    <script ws-replace="Head"></script>
+  </head>
+  <body>
+    <header class="navbar ${NavbarOverlay} is-dark">
+      <div class="container">
+        <div class="navbar-brand">
+          <a
+            class="navbar-item is-hoverable"
+            onclick="Client.Bulma.ToggleDrawer()"
+            ><i class="fa fa-bars"></i
+          ></a>
+          <a href="/" class="navbar-item">${ShortTitle}</a>
+        </div>
+        <div class="navbar-menu">
+          <nav class="navbar-start" ws-hole="TopMenu">
+            <a
+              ws-template="TopMenuItem"
+              href="${Url}"
+              class="navbar-item is-hoverable"
+              >${Text}</a
+            >
+            <div
+              ws-template="TopMenuItemWithDropdown"
+              class="navbar-item is-hoverable has-dropdown"
+            >
+              <a class="navbar-link">${Text}</a>
+              <div class="navbar-dropdown" ws-hole="DropdownItems">
+                <a
+                  ws-template="TopMenuDropdownItem"
+                  class="navbar-item"
+                  href="${Url}"
+                  >${Text}</a
+                >
+              </div>
+            </div>
+          </nav>
+          <div
+            ws-replace="LanguageSelectorPlaceholder"
+            ws-template="LanguageSelector"
+            class="navbar-end"
+          >
+            <div class="navbar-item">
+              <div ws-replace="Languages">
+                <a
+                  ws-template="LanguageItem"
+                  class="button is-ghost"
+                  href="${Url}"
+                >
+                  <strong>${Title}</strong>
+                </a>
+                <a
+                  ws-template="LanguageItemActive"
+                  class="button is-ghost is-active"
+                  href="${Url}"
+                >
+                  <strong>${Title}</strong>
+                </a>
+              </div>
             </div>
           </div>
+        </div>
+        <div class="navbar-end">
+          <a
+            target="_blank"
+            title="RSS"
+            href="/feed.rss"
+            class="navbar-item is-hoverable"
+            ><i class="fas fa-rss"></i
+          ></a>
+        </div>
+      </div>
+    </header>
+    <div class="drawer-backdrop" onclick="Client.Bulma.ToggleDrawer()">
+      <div id="left-drawer" class="lhs-drawer">
+        <nav class="menu">
+          <ul class="menu-list" ws-hole="DrawerMenu">
+            <li ws-template="DrawerMenuItem">
+              <a href="${Url}">${Text}</a>
+              <ul ws-replace="Children"></ul>
+            </li>
+          </ul>
         </nav>
-        <div ws-replace="LanguageSelectorPlaceholder" ws-template="LanguageSelector" class="navbar-end">
-          <div class="navbar-item">
-            <div ws-replace="Languages">
-              <a ws-template="LanguageItem" class="button is-ghost" href="${Url}">
-                <strong>${Title}</strong>
-              </a>
-              <a ws-template="LanguageItemActive" class="button is-ghost is-active" href="${Url}">
-                <strong>${Title}</strong>
-              </a>
+      </div>
+    </div>
+    <div ws-replace="Body">
+      <div ws-children-template="HomeBody">
+        <section ws-template="HomeBanner" class="hero is-medium page-banner">
+          <div class="hero-body has-text-centered">
+            <h1 class="title is-spaced has-text-light">${Title}</h1>
+            <h2 class="subtitle has-text-light">${Subtitle}</h2>
+          </div>
+        </section>
+        <section ws-template="CategoryBanner" class="hero is-info">
+          <div class="hero-body">
+            <div class="container">
+              <h1 class="title">"${Category}"</h1>
+              <h2 class="subtitle">Filtered articles</h2>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="navbar-end">
-        <a target="_blank" title="RSS" href="/feed.rss" class="navbar-item is-hoverable"><i class="fas fa-rss"></i></a>
-      </div>
-    </div>
-  </header>
-  <div class="drawer-backdrop" onclick="Client.Bulma.ToggleDrawer()">
-    <div id="left-drawer" class="lhs-drawer">
-      <nav class="menu">
-        <ul class="menu-list" ws-hole="DrawerMenu">
-          <li ws-template="DrawerMenuItem">
-            <a href="${Url}">${Text}</a>
-            <ul ws-replace="Children"></ul>
-          </li>
-        </ul>
-      </nav>
-    </div>
-  </div>
-  <div ws-replace="Body">
-    <div ws-children-template="HomeBody">
-      <section ws-template="HomeBanner" class="hero is-medium page-banner">
-        <div class="hero-body has-text-centered">
-          <h1 class="title is-spaced has-text-light">${Title}</h1>
-          <h2 class="subtitle has-text-light">${Subtitle}</h2>
-        </div>
-      </section>
-      <section ws-template="CategoryBanner" class="hero is-info">
-        <div class="hero-body">
+        </section>
+        <section ws-replace="Banner"></section>
+        <section class="section">
           <div class="container">
-            <h1 class="title">
-              "${Category}"
-            </h1>
-            <h2 class="subtitle">
-              Filtered articles
-            </h2>
-          </div>
-        </div>
-      </section>
-      <section ws-replace="Banner"></section>
-      <section class="section">
-        <div class="container">
-          <div ws-hole="ArticleList">
-            <div ws-template="ArticleCard" class="box is-dark">
-              <div class="card">
-                <div class="card-content">
-                  <div class="media">
-                    <div class="media-content">
-                      <a href="${Url}"><p class="title is-4">${Title}</p></a>
-                      <p class="subtitle is-6" ws-hole="Author"></p>
-                    </div>
-                  </div>
-                  <div class="content">
-                    ${Abstract}
-                    <div ws-replace="ArticleCategories">
-                      <div ws-children-template="ArticleCategory">
-                        <a href="${Url}">#${Title}</a>&nbsp;
+            <div ws-hole="ArticleList">
+              <div ws-template="ArticleCard" class="box is-dark">
+                <div class="card">
+                  <div class="card-content">
+                    <div class="media">
+                      <div class="media-content">
+                        <a href="${Url}"><p class="title is-4">${Title}</p></a>
+                        <p class="subtitle is-6" ws-hole="Author"></p>
                       </div>
                     </div>
-                    <br>
-                    <time datetime="2016-1-1">${Date}</time>
+                    <div class="content">
+                      ${Abstract}
+                      <div ws-replace="ArticleCategories">
+                        <div ws-children-template="ArticleCategory">
+                          <a href="${Url}">#${Title}</a>&nbsp;
+                        </div>
+                      </div>
+                      <br />
+                      <time datetime="2016-1-1">${Date}</time>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
-    </div>
-    <div>
-      <section ws-children-template="ArticlePage" class="with-sidebar-background">
-        <div class="container">
-          <div class="columns is-gapless">
-            <div ws-children-template="Article" ws-hole="Article" class="column content markdown-column">
-              <section class="hero">
-                <div class="hero-body">
-                  <h1 class="title">${Title}</h1>
-                  <p class="subtitle" ws-replace="Subtitle"></p>
-                </div>
-              </section>
-              <section class="section" ws-hole="Content"></section>
-              <blockquote>
-                Is there something wrong? <a href="https://github.com/AngelMunoz/SiteFi/issues/new?title=${Title}" target="_blank" rel="noopener noreferrer">Raise an issue!</a>
-                <br>
-                Or if it's simpler, find me in <a href="https://twitter.com/angel_d_munoz" target="_blank" rel="noopener noreferrer">Twitter</a>!
-              </blockquote>
-            </div>
-            <div ws-children-template="Sidebar" ws-hole="Sidebar" class="column is-one-quarter-tablet is-one-fifth-desktop sidebar-column">
-              <nav ws-template="Categories" ws-replace="Categories" class="panel is-dark" style="margin-top: 1em;box-shadow:none;">
-                <p class="panel-heading" style="border:0">
-                  Categories
-                </p>
-                <div class="tags are-small panel-content">
-                  <div ws-replace="Categories">
-                    <a ws-template="Category" class="is-inline ${ExtraCSS}" href="${Url}" style="padding: 0.5em 0.5em 0 0;">
-                      <span class="tag is-info">${Name}</span>
+        </section>
+      </div>
+      <div>
+        <section
+          ws-children-template="ArticlePage"
+          class="with-sidebar-background"
+        >
+          <div class="container">
+            <div class="columns is-gapless">
+              <div
+                ws-children-template="Article"
+                ws-hole="Article"
+                class="column content markdown-column"
+              >
+                <section class="hero">
+                  <div class="hero-body">
+                    <h1 class="title">${Title}</h1>
+                    <p class="subtitle" ws-replace="Subtitle"></p>
+                  </div>
+                </section>
+                <section class="section" ws-hole="Content"></section>
+                <blockquote>
+                  Is there something wrong?
+                  <a
+                    href="https://github.com/AngelMunoz/SiteFi/issues/new?title=${Title}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Raise an issue!</a
+                  >
+                  <br />
+                  Or if it's simpler, find me in
+                  <a
+                    href="https://twitter.com/angel_d_munoz"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Twitter</a
+                  >!
+                </blockquote>
+              </div>
+              <div
+                ws-children-template="Sidebar"
+                ws-hole="Sidebar"
+                class="
+                  column
+                  is-one-quarter-tablet is-one-fifth-desktop
+                  sidebar-column
+                "
+              >
+                <nav
+                  ws-template="Categories"
+                  ws-replace="Categories"
+                  class="panel is-dark"
+                  style="margin-top: 1em; box-shadow: none"
+                >
+                  <p class="panel-heading" style="border: 0">Categories</p>
+                  <div class="tags are-small panel-content">
+                    <div ws-replace="Categories">
+                      <a
+                        ws-template="Category"
+                        class="is-inline ${ExtraCSS}"
+                        href="${Url}"
+                        style="padding: 0.5em 0.5em 0 0"
+                      >
+                        <span class="tag is-info">${Name}</span>
+                      </a>
+                    </div>
+                  </div>
+                </nav>
+                <nav class="panel is-dark" style="margin-top: 2em">
+                  <p class="panel-heading">All posts</p>
+                  <p class="panel-tabs">
+                    <a
+                      target="_blank"
+                      title="RSS"
+                      href="/feed.rss"
+                      class="is-ghost"
+                      >RSS</a
+                    >
+                    <a
+                      target="_blank"
+                      title="ATOM"
+                      href="/feed.atom"
+                      class="is-ghost"
+                      >Atom</a
+                    >
+                  </p>
+                  <div ws-replace="ArticleItems">
+                    <a
+                      ws-template="ArticleItem"
+                      class="panel-block ${ExtraCSS}"
+                      href="${Url}"
+                      style="border-right: 0; border-top: 0; border-bottom: 0"
+                    >
+                      ${Title}
                     </a>
                   </div>
-                </div>
-              </nav>
-              <nav class="panel is-dark" style="margin-top:2em;">
-                <p class="panel-heading">
-                  All posts
-                </p>
-                <p class="panel-tabs">
-                  <a target="_blank" title="RSS" href="/feed.rss" class="is-ghost">RSS</a>
-                  <a target="_blank" title="ATOM" href="/feed.atom" class="is-ghost">Atom</a>
-                </p>
-                <div ws-replace="ArticleItems">
-                  <a ws-template="ArticleItem" class="panel-block ${ExtraCSS}" href="${Url}" style="border-right:0;border-top:0;border-bottom:0;">
-                    ${Title}
-                  </a>
-                </div>
-              </nav>
+                </nav>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
-    </div>
-  </div>
-  <footer class="footer has-background-dark has-text-light mt-4">
-    <div class="content has-text-centered">
-      <p>
-        Powered by
-        <a href="https://github.com/granicz/SiteFi">
-          <strong>SiteFi</strong>
-        </a>
-      </p>
-      <div style="display: flex; justify-content: space-evenly;">
-        <a style="color:rgb(87, 147, 182);" target="_blank" title="RSS" href="/feed.rss" class="is-hoverable">
-          RSS
-          <span class="icon is-large">
-            <i class="fas fa-rss-square fa-2x"></i>
-          </span>
-        </a>
-
-        <a style="color:rgb(147, 148, 85);" target="_blank" title="ATOM" href="/feed.atom" class="is-hoverable">
-          ATOM
-          <span class="icon is-large">
-            <i class="fas fa-rss-square fa-2x"></i>
-          </span>
-        </a>
+        </section>
       </div>
     </div>
-  </footer>
-  <script src="/js/Client${ReleaseMin}.js"></script>
-  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-</body>
+    <footer class="footer has-background-dark has-text-light mt-4">
+      <div class="content has-text-centered">
+        <p>
+          Powered by
+          <a href="https://github.com/granicz/SiteFi">
+            <strong>SiteFi</strong>
+          </a>
+        </p>
+        <div style="display: flex; justify-content: space-evenly">
+          <a
+            style="color: rgb(87, 147, 182)"
+            target="_blank"
+            title="RSS"
+            href="/feed.rss"
+            class="is-hoverable"
+          >
+            RSS
+            <span class="icon is-large">
+              <i class="fas fa-rss-square fa-2x"></i>
+            </span>
+          </a>
+
+          <a
+            style="color: rgb(147, 148, 85)"
+            target="_blank"
+            title="ATOM"
+            href="/feed.atom"
+            class="is-hoverable"
+          >
+            ATOM
+            <span class="icon is-large">
+              <i class="fas fa-rss-square fa-2x"></i>
+            </span>
+          </a>
+        </div>
+      </div>
+    </footer>
+    <script src="/js/Client${ReleaseMin}.js"></script>
+    <script
+      defer
+      src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"
+    ></script>
+    <script src="https://storage.ko-fi.com/cdn/scripts/overlay-widget.js"></script>
+    <script>
+      kofiWidgetOverlay.draw("daniel_tuna", {
+        type: "floating-chat",
+        "floating-chat.donateButton.text": "Tip Me",
+        "floating-chat.donateButton.background-color": "#323842",
+        "floating-chat.donateButton.text-color": "#fff",
+      });
+    </script>
+  </body>
 </html>
