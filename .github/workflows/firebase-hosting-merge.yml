@@ -2,25 +2,25 @@
 # https://github.com/firebase/firebase-tools
 
 name: Deploy to Firebase Hosting on merge
-'on':
+"on":
   push:
     branches:
       - tunaxors-blog
 jobs:
   build_and_deploy:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Setup dotnet
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '3.x.x'
+          dotnet-version: "6.x.x"
       - run: npm i -g pnpm
       - run: cd src/Hosted && pnpm i
       - run: dotnet build SiteFi.sln
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_TUNAXORS_BLOG }}'
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_TUNAXORS_BLOG }}"
           channelId: live
           projectId: tunaxors-blog
