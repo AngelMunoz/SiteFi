@@ -156,7 +156,7 @@ module Site =
     open System.IO
     open WebSharper.UI.Html
 
-    type MainTemplate = Templating.Template<"../hosted/index.html", serverLoad=Templating.ServerLoad.WhenChanged>
+    type MainTemplate = Templating.Template<"../Hosted/index.html", serverLoad=Templating.ServerLoad.WhenChanged>
 
     [<CLIMutable>]
     type RawConfig =
@@ -214,24 +214,23 @@ module Site =
         let KEY_VALUE_LIST whatFor ss =
             (Helpers.NULL_TO_EMPTY ss)
                 .Split([| "," |], StringSplitOptions.None)
-            |> Array.choose
-                (fun s ->
-                    if String.IsNullOrEmpty s then
+            |> Array.choose (fun s ->
+                if String.IsNullOrEmpty s then
+                    None
+                else
+                    let parts =
+                        s.Split([| "->" |], StringSplitOptions.None)
+
+                    if Array.length parts <> 2 then
+                        eprintfn
+                            "warning: Incorrect key-value format for substring [%s] in [%s] for [%s], ignoring."
+                            s
+                            ss
+                            whatFor
+
                         None
                     else
-                        let parts =
-                            s.Split([| "->" |], StringSplitOptions.None)
-
-                        if Array.length parts <> 2 then
-                            eprintfn
-                                "warning: Incorrect key-value format for substring [%s] in [%s] for [%s], ignoring."
-                                s
-                                ss
-                                whatFor
-
-                            None
-                        else
-                            Some(parts.[0], parts.[1]))
+                        Some(parts.[0], parts.[1]))
             |> Set.ofArray
             |> Set.toList
             |> Map.ofList
@@ -297,9 +296,10 @@ module Site =
                         // If the content is given in the header, use that instead.
                         let content =
                             if article.content <> null then
-                                Markdown.Convert article.content
+
+                                Markdig.Markdown.ToHtml article.content
                             else
-                                Markdown.Convert content
+                                Markdig.Markdown.ToHtml content
 
                         let date = DateTime(year, month, day)
                         let categories = Helpers.NULL_TO_EMPTY article.categories
@@ -365,10 +365,9 @@ module Site =
             |> List.map (fun (_, art) -> art.Language)
             |> List.distinct
             // Filter out the master language
-            |> List.filter
-                (fun lang ->
-                    URL_LANG config lang
-                    |> (String.IsNullOrEmpty >> not))
+            |> List.filter (fun lang ->
+                URL_LANG config lang
+                |> (String.IsNullOrEmpty >> not))
         // Add back the default language IFF there is at least one other language
         let languages =
             // Turn a language key to a (key, displayname) pair.
@@ -424,27 +423,25 @@ module Site =
                         .LanguageSelector()
                         .Languages(
                             languages
-                            |> List.map
-                                (fun (url_lang, lang) ->
-                                    if langopt = url_lang then
-                                        MainTemplate
-                                            .LanguageItemActive()
-                                            .Title(lang)
-                                            .Url(Urls.LANG url_lang)
-                                            .Doc()
-                                    else
-                                        MainTemplate
-                                            .LanguageItem()
-                                            .Title(lang)
-                                            .Url(Urls.LANG url_lang)
-                                            .Doc())
+                            |> List.map (fun (url_lang, lang) ->
+                                if langopt = url_lang then
+                                    MainTemplate
+                                        .LanguageItemActive()
+                                        .Title(lang)
+                                        .Url(Urls.LANG url_lang)
+                                        .Doc()
+                                else
+                                    MainTemplate
+                                        .LanguageItem()
+                                        .Title(lang)
+                                        .Url(Urls.LANG url_lang)
+                                        .Doc())
                         )
                         .Doc()
             )
             .TopMenu(
                 Menu articles
-                |> List.map
-                    (function
+                |> List.map (function
                     | text, url, map when Map.isEmpty map ->
                         MainTemplate
                             .TopMenuItem()
@@ -456,13 +453,12 @@ module Site =
                             children
                             |> Map.toList
                             |> List.sortByDescending (fun (key, item) -> item.Date)
-                            |> List.map
-                                (fun (key, item) ->
-                                    MainTemplate
-                                        .TopMenuDropdownItem()
-                                        .Text(item.Title)
-                                        .Url(item.Url)
-                                        .Doc())
+                            |> List.map (fun (key, item) ->
+                                MainTemplate
+                                    .TopMenuDropdownItem()
+                                    .Text(item.Title)
+                                    .Url(item.Url)
+                                    .Doc())
 
                         MainTemplate
                             .TopMenuItemWithDropdown()
@@ -472,30 +468,28 @@ module Site =
             )
             .DrawerMenu(
                 Menu articles
-                |> List.map
-                    (fun (text, url, children) ->
-                        MainTemplate
-                            .DrawerMenuItem()
-                            .Text(text)
-                            .Url(url)
-                            .Children(
-                                match url with
-                                | "/blog" ->
-                                    ul
-                                        []
-                                        (children
-                                         |> Map.toList
-                                         |> List.sortByDescending (fun (_, item) -> item.Date)
-                                         |> List.map
-                                             (fun (_, item) ->
-                                                 MainTemplate
-                                                     .DrawerMenuItem()
-                                                     .Text(item.Title)
-                                                     .Url(item.Url)
-                                                     .Doc()))
-                                | _ -> Doc.Empty
-                            )
-                            .Doc())
+                |> List.map (fun (text, url, children) ->
+                    MainTemplate
+                        .DrawerMenuItem()
+                        .Text(text)
+                        .Url(url)
+                        .Children(
+                            match url with
+                            | "/blog" ->
+                                ul
+                                    []
+                                    (children
+                                     |> Map.toList
+                                     |> List.sortByDescending (fun (_, item) -> item.Date)
+                                     |> List.map (fun (_, item) ->
+                                         MainTemplate
+                                             .DrawerMenuItem()
+                                             .Text(item.Title)
+                                             .Url(item.Url)
+                                             .Doc()))
+                            | _ -> Doc.Empty
+                        )
+                        .Doc())
             )
             .Body(body)
             .Doc()
@@ -513,13 +507,12 @@ module Site =
                         .Categories()
                         .Categories(
                             article.Categories
-                            |> List.map
-                                (fun category ->
-                                    MainTemplate
-                                        .Category()
-                                        .Name(category)
-                                        .Url(Urls.CATEGORY category (URL_LANG config article.Language))
-                                        .Doc())
+                            |> List.map (fun category ->
+                                MainTemplate
+                                    .Category()
+                                    .Name(category)
+                                    .Url(Urls.CATEGORY category (URL_LANG config article.Language))
+                                    .Doc())
                         )
                         .Doc()
             )
@@ -529,19 +522,18 @@ module Site =
                 articles
                 |> Map.toList
                 |> List.sortByDescending (fun (_, item) -> item.Date)
-                |> List.map
-                    (fun (_, item) ->
-                        MainTemplate
-                            .ArticleItem()
-                            .Title(item.Title)
-                            .Url(item.Url)
-                            .ExtraCSS(
-                                if article.Url = item.Url then
-                                    "is-active"
-                                else
-                                    ""
-                            )
-                            .Doc())
+                |> List.map (fun (_, item) ->
+                    MainTemplate
+                        .ArticleItem()
+                        .Title(item.Title)
+                        .Url(item.Url)
+                        .ExtraCSS(
+                            if article.Url = item.Url then
+                                "is-active"
+                            else
+                                ""
+                        )
+                        .Doc())
             )
             .Doc()
 
@@ -610,13 +602,12 @@ module Site =
                               Doc.Empty
                           else
                               article.Categories
-                              |> List.map
-                                  (fun category ->
-                                      MainTemplate
-                                          .ArticleCategory()
-                                          .Title(category)
-                                          .Url(Urls.CATEGORY category (URL_LANG config.Value article.Language))
-                                          .Doc())
+                              |> List.map (fun category ->
+                                  MainTemplate
+                                      .ArticleCategory()
+                                      .Title(category)
+                                      .Url(Urls.CATEGORY category (URL_LANG config.Value article.Language))
+                                      .Doc())
                               |> Doc.Concat
                       )
                       .Doc() ]
@@ -646,121 +637,120 @@ module Site =
                 .Doc()
             |> Page langopt config.Value None false articles.Value
 
-        Application.MultiPage
-            (fun (ctx: Context<_>) ->
-                function
-                | Home langopt ->
-                    HOME langopt
-                    <| MainTemplate
-                        .HomeBanner()
-                        .Title(config.Value.Title)
-                        .Subtitle(config.Value.Description)
-                        .Doc()
-                    <| fun _ article -> langopt = URL_LANG config.Value article.Language
-                | Article p -> ARTICLE("", p)
-                | UserArticle (user, "") ->
-                    HOME ""
-                    <| MainTemplate.HomeBanner().Doc()
-                    <| fun (u, _) _ -> user = u
-                | UserArticle (user, p) -> ARTICLE(user, p)
-                | Category (cat, langopt) ->
-                    HOME langopt
-                    <| MainTemplate.CategoryBanner().Category(cat).Doc()
-                    <| fun _ article ->
-                        langopt = URL_LANG config.Value article.Language
-                        && List.contains cat article.Categories
-                // For a simple but useful reference on Atom vs RSS content, refer to:
-                // https://www.intertwingly.net/wiki/pie/Rss20AndAtom10Compared
-                | AtomFeed ->
-                    Content.Custom(
-                        Status = Http.Status.Ok,
-                        Headers = [ Http.Header.Custom "content-type" "application/atom+xml" ],
-                        WriteBody =
-                            fun stream ->
-                                let ns =
-                                    XNamespace.Get "http://www.w3.org/2005/Atom"
+        Application.MultiPage (fun (ctx: Context<_>) ->
+            function
+            | Home langopt ->
+                HOME langopt
+                <| MainTemplate
+                    .HomeBanner()
+                    .Title(config.Value.Title)
+                    .Subtitle(config.Value.Description)
+                    .Doc()
+                <| fun _ article -> langopt = URL_LANG config.Value article.Language
+            | Article p -> ARTICLE("", p)
+            | UserArticle (user, "") ->
+                HOME ""
+                <| MainTemplate.HomeBanner().Doc()
+                <| fun (u, _) _ -> user = u
+            | UserArticle (user, p) -> ARTICLE(user, p)
+            | Category (cat, langopt) ->
+                HOME langopt
+                <| MainTemplate.CategoryBanner().Category(cat).Doc()
+                <| fun _ article ->
+                    langopt = URL_LANG config.Value article.Language
+                    && List.contains cat article.Categories
+            // For a simple but useful reference on Atom vs RSS content, refer to:
+            // https://www.intertwingly.net/wiki/pie/Rss20AndAtom10Compared
+            | AtomFeed ->
+                Content.Custom(
+                    Status = Http.Status.Ok,
+                    Headers = [ Http.Header.Custom "content-type" "application/atom+xml" ],
+                    WriteBody =
+                        fun stream ->
+                            let ns =
+                                XNamespace.Get "http://www.w3.org/2005/Atom"
 
-                                let articles =
-                                    articles.Value
-                                    |> Map.toList
-                                    |> List.sortByDescending (fun (_, article: Article) -> article.Date.Ticks)
+                            let articles =
+                                articles.Value
+                                |> Map.toList
+                                |> List.sortByDescending (fun (_, article: Article) -> article.Date.Ticks)
 
-                                let doc =
-                                    X
-                                        (ns + "feed")
-                                        []
-                                        [ X(ns + "title") [] [ TEXT config.Value.Title ]
-                                          X(ns + "subtitle") [] [ TEXT config.Value.Description ]
-                                          X(ns + "link") [ "href" => config.Value.ServerUrl ] []
-                                          X(ns + "updated") [] [ Helpers.ATOM_DATE DateTime.UtcNow ]
-                                          for ((user, slug), article) in articles do
-                                              X
-                                                  (ns + "entry")
-                                                  []
-                                                  [ X(ns + "title") [] [ TEXT article.Title ]
-                                                    X
-                                                        (ns + "link")
-                                                        [ "href"
-                                                          => config.Value.ServerUrl + Urls.POST_URL(user, slug) ]
-                                                        []
-                                                    X(ns + "id") [] [ TEXT(user + slug) ]
-                                                    for category in article.Categories do
-                                                        X(ns + "category") [] [ TEXT category ]
-                                                    X(ns + "summary") [] [ TEXT article.Abstract ]
-                                                    X(ns + "updated") [] [ TEXT <| Helpers.ATOM_DATE article.Date ]
-                                                    X
-                                                        (ns + "content")
-                                                        [ XAttribute(XName.Get "type", "html") ]
-                                                        [ TEXT article.Content ] ] ]
-
-                                doc.Save(stream)
-                    )
-                | RSSFeed ->
-                    Content.Custom(
-                        Status = Http.Status.Ok,
-                        Headers = [ Http.Header.Custom "content-type" "application/rss+xml" ],
-                        WriteBody =
-                            fun stream ->
-                                let articles =
-                                    articles.Value
-                                    |> Map.toList
-                                    |> List.sortByDescending (fun (_, article: Article) -> article.Date.Ticks)
-
-                                let doc =
-                                    X
-                                        (N "rss")
-                                        [ "version" => "2.0" ]
-                                        [ X
-                                              (N "channel")
+                            let doc =
+                                X
+                                    (ns + "feed")
+                                    []
+                                    [ X(ns + "title") [] [ TEXT config.Value.Title ]
+                                      X(ns + "subtitle") [] [ TEXT config.Value.Description ]
+                                      X(ns + "link") [ "href" => config.Value.ServerUrl ] []
+                                      X(ns + "updated") [] [ Helpers.ATOM_DATE DateTime.UtcNow ]
+                                      for ((user, slug), article) in articles do
+                                          X
+                                              (ns + "entry")
                                               []
-                                              [ X(N "title") [] [ TEXT config.Value.Title ]
-                                                X(N "description") [] [ TEXT config.Value.Description ]
-                                                X(N "link") [] [ TEXT config.Value.ServerUrl ]
-                                                X(N "lastBuildDate") [] [ Helpers.RSS_DATE DateTime.UtcNow ]
-                                                for ((user, slug), article) in articles do
-                                                    X
-                                                        (N "item")
-                                                        []
-                                                        [ X(N "title") [] [ TEXT article.Title ]
-                                                          X
-                                                              (N "link")
-                                                              []
-                                                              [ TEXT
-                                                                <| config.Value.ServerUrl + Urls.POST_URL(user, slug) ]
-                                                          X(N "guid") [ "isPermaLink" => "false" ] [ TEXT(user + slug) ]
-                                                          for category in article.Categories do
-                                                              X(N "category") [] [ TEXT category ]
-                                                          X(N "description") [] [ TEXT article.Abstract ]
-                                                          X(N "pubDate") [] [ TEXT <| Helpers.RSS_DATE article.Date ]
-                                                          X(N "content") [] [ TEXT article.Content ] ] ] ]
+                                              [ X(ns + "title") [] [ TEXT article.Title ]
+                                                X
+                                                    (ns + "link")
+                                                    [ "href"
+                                                      => config.Value.ServerUrl + Urls.POST_URL(user, slug) ]
+                                                    []
+                                                X(ns + "id") [] [ TEXT(user + slug) ]
+                                                for category in article.Categories do
+                                                    X(ns + "category") [] [ TEXT category ]
+                                                X(ns + "summary") [] [ TEXT article.Abstract ]
+                                                X(ns + "updated") [] [ TEXT <| Helpers.ATOM_DATE article.Date ]
+                                                X
+                                                    (ns + "content")
+                                                    [ XAttribute(XName.Get "type", "html") ]
+                                                    [ TEXT article.Content ] ] ]
 
-                                doc.Save(stream)
-                    )
-                | Refresh ->
-                    // Reload the article cache and the master configs
-                    articles := ReadArticles()
-                    config := ReadConfig()
-                    Content.Text "Articles/configs reloaded.")
+                            doc.Save(stream)
+                )
+            | RSSFeed ->
+                Content.Custom(
+                    Status = Http.Status.Ok,
+                    Headers = [ Http.Header.Custom "content-type" "application/rss+xml" ],
+                    WriteBody =
+                        fun stream ->
+                            let articles =
+                                articles.Value
+                                |> Map.toList
+                                |> List.sortByDescending (fun (_, article: Article) -> article.Date.Ticks)
+
+                            let doc =
+                                X
+                                    (N "rss")
+                                    [ "version" => "2.0" ]
+                                    [ X
+                                          (N "channel")
+                                          []
+                                          [ X(N "title") [] [ TEXT config.Value.Title ]
+                                            X(N "description") [] [ TEXT config.Value.Description ]
+                                            X(N "link") [] [ TEXT config.Value.ServerUrl ]
+                                            X(N "lastBuildDate") [] [ Helpers.RSS_DATE DateTime.UtcNow ]
+                                            for ((user, slug), article) in articles do
+                                                X
+                                                    (N "item")
+                                                    []
+                                                    [ X(N "title") [] [ TEXT article.Title ]
+                                                      X
+                                                          (N "link")
+                                                          []
+                                                          [ TEXT
+                                                            <| config.Value.ServerUrl + Urls.POST_URL(user, slug) ]
+                                                      X(N "guid") [ "isPermaLink" => "false" ] [ TEXT(user + slug) ]
+                                                      for category in article.Categories do
+                                                          X(N "category") [] [ TEXT category ]
+                                                      X(N "description") [] [ TEXT article.Abstract ]
+                                                      X(N "pubDate") [] [ TEXT <| Helpers.RSS_DATE article.Date ]
+                                                      X(N "content") [] [ TEXT article.Content ] ] ] ]
+
+                            doc.Save(stream)
+                )
+            | Refresh ->
+                // Reload the article cache and the master configs
+                articles := ReadArticles()
+                config := ReadConfig()
+                Content.Text "Articles/configs reloaded.")
 
 open System.IO
 
@@ -813,11 +803,12 @@ type Website() =
               // Generate tag/category pages
               for category in categories do
                   for language in languages do
-                      if List.exists
-                          (fun (_, (art: Site.Article)) ->
-                              language = Site.URL_LANG config.Value art.Language
-                              && List.contains category art.Categories)
-                          articles then
+                      if
+                          List.exists
+                              (fun (_, (art: Site.Article)) ->
+                                  language = Site.URL_LANG config.Value art.Language
+                                  && List.contains category art.Categories)
+                              articles then
                           Category(category, language)
               // Generate the RSS/Atom feeds
               RSSFeed
