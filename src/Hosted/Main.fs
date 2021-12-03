@@ -236,7 +236,7 @@ module Site =
             |> Map.ofList
 
         let config =
-            Path.Combine(__SOURCE_DIRECTORY__, @"../hosted/config.yml")
+            Path.Combine(__SOURCE_DIRECTORY__, @"../Hosted/config.yml")
 
         if File.Exists config then
             let config =
@@ -267,7 +267,7 @@ module Site =
 
     let ReadArticles () : Articles =
         let root =
-            Path.Combine(__SOURCE_DIRECTORY__, @"../hosted/posts")
+            Path.Combine(__SOURCE_DIRECTORY__, @"../Hosted/posts")
 
         let ReadFolder user store =
             let folder = Path.Combine(root, user)
