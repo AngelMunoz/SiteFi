@@ -1,26 +1,26 @@
 ---
 title: Web Scrapping con F#
 subtitle: ~
-categories: fsharp,webscrapping,playwright,dotnet
+categories: fsharp,webscrapping,playwright,dotnet,simplethingsfsharp
 abstract: Quiza hayas hecho web scrapping con python antes, pero que tal F#?...
 date: 2021-08-18
 language: es
 ---
 
-[Playwright]: https://playwright.dev/dotnet/
-[.NET SDK]: https://dotnet.microsoft.com/download
-[Ionide]: https://ionide.io/
-[Rider]: https://www.jetbrains.com/rider/
-[Visual Studio]: https://visualstudio.microsoft.com/vs/community/
-[Task]: https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task?view=net-5.0
-[Async]: https://docs.microsoft.com/en-us/dotnet/fsharp/tutorials/asynchronous-and-concurrent-programming/async
+[playwright]: https://playwright.dev/dotnet/
+[.net sdk]: https://dotnet.microsoft.com/download
+[ionide]: https://ionide.io/
+[rider]: https://www.jetbrains.com/rider/
+[visual studio]: https://visualstudio.microsoft.com/vs/community/
+[task]: https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task?view=net-5.0
+[async]: https://docs.microsoft.com/en-us/dotnet/fsharp/tutorials/asynchronous-and-concurrent-programming/async
 
-> ***NOTA***: El conenido de este post esta basado en este proyecto
+> **_NOTA_**: El conenido de este post esta basado en este proyecto
 >
 > https://github.com/AngelMunoz/Escalin
 
-
 # Cosas simples en FSharp
+
 Hola! esta es la sexta entrada en cosas simples con F#!
 
 Si alguna vez has querido sacar informacion periodicamente de algun sitio web, o quiza eres un QA automation que quiere hacer pruebas E2E (end to end) entonces [Playwright] puede que sea una opcion para ti, similar a Cypress o PhantomJS. Playwright es una libreria que te permite automatizar interacciones con sitios web.
@@ -28,8 +28,8 @@ Si alguna vez has querido sacar informacion periodicamente de algun sitio web, o
 Playwright ofrece los siguientes navegadores
 
 - Chromium
-    - Edge
-    - Chrome
+  - Edge
+  - Chrome
 - Firefox
 - Webkit
 
@@ -49,6 +49,7 @@ Una vez instalado podemos iniciar con un proyecto de consola de la siguiente man
 # tambien puedes usar VB o C# si asi lo prefieres
 dotnet new console -lang F# -o Escalin
 ```
+
 En este caso cree un proyecto llamado `Escalin` una vez creado el proyecto vamos a instalar las siguientes dependencias
 
 ```powershell
@@ -61,14 +62,13 @@ dotnet build
 playwright install
 ```
 
-> ***SCRIPTING***: Puedes usar playwright con scripts de F# pero es necesario que hayas instalado previamente los navegadores, ya sea que hayas creado un proyecto dummy con los pasos de arriba o usado la herramienta de npm de playwright para hacerlo
+> **_SCRIPTING_**: Puedes usar playwright con scripts de F# pero es necesario que hayas instalado previamente los navegadores, ya sea que hayas creado un proyecto dummy con los pasos de arriba o usado la herramienta de npm de playwright para hacerlo
 
 Una vez agregadas nuestras dependencias podemos abrir el codigo en vscode con [Ionide], [Rider] o [Visual Studio].
 
 ## Ejercicio
 
 Para el ejercicio de hoy vamos a hacer un web scrapping de mi propio blog y conseguiremos una lista de resumenes de los articulos y los guardaremos en un archivo json.
-
 
 Para esto necesitaremos:
 
@@ -79,7 +79,6 @@ Para esto necesitaremos:
 - Escribir en un archivo JSON llamados `posts.json`
 
 Primero vamos a agregar los namespaces que necesitamos para trabajar todo lo que vamos a hacer y agregar un par de tipos que nos ayudaran.
-
 
 ```fsharp
 open Microsoft.Playwright
@@ -116,7 +115,6 @@ type Post =
       date: string }
 ```
 
-
 El objetivo es tener algo como lo siguiete dentro de nuestro `main`
 
 ```fsharp
@@ -144,10 +142,9 @@ en el caso de `Async.AwaitTask` y `Async.RunSynchronously` no es necesario, por 
 
 > El operador `pipe` es bastante util y de hecho podria [llegar en algun punto a javascript](https://github.com/tc39/proposal-pipeline-operator)
 >
-> visualizado de otra forma podria ser escrito asi 
+> visualizado de otra forma podria ser escrito asi
 >
 > `64 |> sumar 10` equivale a `sumar 10 64`
->
 
 Vamos a iniciar entonces con `getBrowser`
 
@@ -236,9 +233,9 @@ Aqui viene lo sabroso! `convertElementToPost` esta funcion es algo mas complicad
 5. el contenido lo vamos a separar en un arreglo de partes a partir de que la cadena de texto tenga `...`
 6. para el resument trataremos de obtener el primer elemento del arreglo o una cadena vacia de manera predeterminada
 7. el segundo elemento lo vamos a dividir en un arreglo donde el texto tenga el caracter `\n`
-    1. Al primer elemento del arreglo lo vamos a dividir nuevamente donde el texto contenga `#` para obtener las etiquetas
-    2. limpiamos cada etiqueta de espacios extras y filtramos las cadenas vacias
-    3. el segundo elemento le quitamos espacios extra y sera nuestra fecha
+   1. Al primer elemento del arreglo lo vamos a dividir nuevamente donde el texto contenga `#` para obtener las etiquetas
+   2. limpiamos cada etiqueta de espacios extras y filtramos las cadenas vacias
+   3. el segundo elemento le quitamos espacios extra y sera nuestra fecha
 
 todo esto basandonos en que cada entrada tiene mas o menos la siguiente forma de texto:
 
@@ -333,7 +330,7 @@ let writePostsToFile (getPosts: Task<Post array>) =
 
 Despues de esto pues el resultado lo aplicamos a la funcion `Async.AwaitTask` debido a que F# implementa la programacion asincrona de dos maneras, con [Async] y con [Task] siendo Task un tipo proveniente principalmente de C# mientras que Async fue el pionero de async/await en .NET al final como F# no tiene un a funcion `main` asincrona entonces esperamos a que se complete el trabajo asincrono y terinamos el programa con un codigo de salida 0
 
-El resultado debe ser mas o menos esto 
+El resultado debe ser mas o menos esto
 
 > NOTA: ese gif tiene codigo viejo, pero el resultado es el mismo
 

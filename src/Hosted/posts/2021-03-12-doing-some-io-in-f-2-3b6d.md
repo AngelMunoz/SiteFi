@@ -1,7 +1,7 @@
 ---
 title: Doing some IO in F# - 2
 subtitle: ~
-categories: dotnet,fsharp,io,samples
+categories: dotnet,fsharp,io,samples,simplethingsfsharp
 abstract: Simple things in F   This is the second post in Simple things in F# I felt the IO chapter is...
 date: 2021-03-12
 language: en
@@ -11,7 +11,7 @@ language: en
 
 This is the second post in Simple things in F# I felt the IO chapter is quite big so I split the `File` and `Directory`
 
-> ***DISCLAIMER***: Remember that IO operations are never guaranteed so you will need to catch errors on your real code I will not discuss exception handling here since that's a complete different topic but keep it in mind please,
+> **_DISCLAIMER_**: Remember that IO operations are never guaranteed so you will need to catch errors on your real code I will not discuss exception handling here since that's a complete different topic but keep it in mind please,
 
 ### Directory
 
@@ -33,7 +33,7 @@ Directory.Delete(dirinfo.FullName)
 ```
 
 > If you try to delete a directory that is not empty you will get an exception, you can just pass a Boolean to recursively delete everything within that directory
-> 
+>
 > ```fsharp
 > Directory.Delete(dirinfo.FullName, true)
 > // or
@@ -57,7 +57,9 @@ let directories =
 
 printfn $"files:\t{files}\n directories:\t{directories}"
 ```
+
 that will get you something like
+
 ```
 files:
         .\README.md
@@ -69,6 +71,7 @@ files:
         .\samples
         .\scripts
 ```
+
 depending on your system of course, now this will only get you the path to the files or directories back if you want to operate with those you would need to that path and the `File` or `Directory` classes to do what you need but you can create a `DirectoryInfo` instance yourself
 
 ```fsharp
@@ -117,16 +120,17 @@ printfn "%A" directories
   C:\Users\scyth\repos\blogpostdrafts\.git\logs\refs\remotes\origin|]
 *)
 ```
+
 that's what gets printed in my case. You can play with the pattern to filter out unwanted directories
 
-Let's now do a relatively common exercise create a tree like structure of the directory layout 
+Let's now do a relatively common exercise create a tree like structure of the directory layout
 
-> ***NOTE***: Please keep in mind that this might be a naïve way to implement this and is not the best solution it's just a way to do it and always refer to a more experimented colleague when you want to do things like these
+> **_NOTE_**: Please keep in mind that this might be a naïve way to implement this and is not the best solution it's just a way to do it and always refer to a more experimented colleague when you want to do things like these
 
 ```fsharp
 open System.IO
 
-// first let's define our data type that will 
+// first let's define our data type that will
 type Hierarchy =
     { Name: string
       Files: string list
@@ -214,7 +218,6 @@ let dir = DirectoryInfo("./samples2")
 dir.MoveTo("./samples")
 ```
 
-So, That's it! I think with this we can close the IO chapter these are common operations of the IO namespace but keep in mind this already exists [here](https://docs.microsoft.com/en-us/dotnet/standard/io/common-i-o-tasks) but since most samples are in C# you might feel intimidated or feel that you are not doing in an *F# idiomatic way* I'd say that you should not worry about it remember that your code runs in `.NET` so don't feel afraid to us existing libraries from other languages such as C# and VB. Feel f
-
+So, That's it! I think with this we can close the IO chapter these are common operations of the IO namespace but keep in mind this already exists [here](https://docs.microsoft.com/en-us/dotnet/standard/io/common-i-o-tasks) but since most samples are in C# you might feel intimidated or feel that you are not doing in an _F# idiomatic way_ I'd say that you should not worry about it remember that your code runs in `.NET` so don't feel afraid to us existing libraries from other languages such as C# and VB. Feel f
 
 As always feel free to comment below or to ping me in twitter 😁

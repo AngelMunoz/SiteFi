@@ -1,32 +1,31 @@
 ---
 title: Doing some IO in F#
 subtitle: ~
-categories: dotnet,fsharp,io,samples
+categories: dotnet,fsharp,io,samples,simplethingsfsharp
 abstract: Simple things in FSharp   As part of my effort to share the F# goodness I'll start a series...
 date: 2021-03-12
 language: en
 ---
 
-[Ply]: https://github.com/crowded/ply
-[System.IO]: https://docs.microsoft.com/en-us/dotnet/api/system.io?view=net-5.0
-[File]: https://docs.microsoft.com/en-us/dotnet/api/system.io.file?view=net-5.0
-[Path]: https://docs.microsoft.com/en-us/dotnet/api/system.io.file?view=net-5.0
-[The File System Is Unpredictable]: https://blog.paranoidcoding.com/2009/12/10/the-file-system-is-unpredictable.html
-
+[ply]: https://github.com/crowded/ply
+[system.io]: https://docs.microsoft.com/en-us/dotnet/api/system.io?view=net-5.0
+[file]: https://docs.microsoft.com/en-us/dotnet/api/system.io.file?view=net-5.0
+[path]: https://docs.microsoft.com/en-us/dotnet/api/system.io.file?view=net-5.0
+[the file system is unpredictable]: https://blog.paranoidcoding.com/2009/12/10/the-file-system-is-unpredictable.html
 
 # Simple things in FSharp
 
 As part of my effort to share the F# goodness I'll start a series of blog posts named "Simple things in F#" while most of these posts will cover .NET aspects in general (File IO, Http Requests, RESTful API's, etc) the code samples will be in F# and they will be as simple as possible.
 
+> **_DISCLAIMER_**: I'll be using [Ply] in most of the samples due to it's efficient task CE and the easy interoperability between C# tasks as well as F#'s async
 
-> ***DISCLAIMER***: I'll be using [Ply] in most of the samples due to it's efficient task CE and the easy interoperability between C# tasks as well as F#'s async
-
-> ***DISCLAIMER 2***: Remember that IO operations are never guaranteed so you will need to catch errors on your real code I will not discuss exception handling here since that's a complete different topic but keep it in mind please
+> **_DISCLAIMER 2_**: Remember that IO operations are never guaranteed so you will need to catch errors on your real code I will not discuss exception handling here since that's a complete different topic but keep it in mind please
 
 Let's begin this series with some simple IO.
 the .NET BCL (Base Class Library) has a bunch of useful classes that allow us to do things in a "standard" way in this case we'll be using the [System.IO] namespace.
 
 #### Path
+
 The [Path] class has some cool methods that allow us to manipulate the path to files and directories in a safe, cross-platform manner it's worth mentioning that `Path` class will only deal with the strings that look like a system path, but they won't check if they exist in the disk that will happen when you do the IO operation.
 
 ```fsharp
@@ -65,10 +64,12 @@ printfn "%s" pathlike
 ```
 
 Also, there other two that I want to mention as well
+
 ```fsharp
 Path.GetInvalidFileNameChars()
 Path.GetInvalidPathChars()
 ```
+
 before creating a file/path perhaps you want to check that you don't have disallowed characters and get an exception ahead.
 
 That being said, with these you can start preparing safe path like strings let's put these in practice as well.
@@ -96,8 +97,7 @@ printfn $"Did we delete the file? {not (File.Exists(path))}"
 
 ```
 
-> ***NOTE***: [The File System Is Unpredictable] so don't rely too much on `File.Exists` 😁
-
+> **_NOTE_**: [The File System Is Unpredictable] so don't rely too much on `File.Exists` 😁
 
 when you create a file in that way you get back an instance of a `FileStream` since I'm using the fsi interpreter it will not allow me to use `use` but remember that streams are disposable so you can use them this way as well
 
@@ -108,7 +108,7 @@ open FSharp.Control.Tasks
 open System
 open System.IO
 
-let createSampleFile() = 
+let createSampleFile() =
     task {
         let path =
             Path.Combine(Path.GetTempPath(), "Sample.txt")
@@ -134,10 +134,12 @@ the `Open` method will lock the file until its closed either disposing it or man
 
 `OpenWrite` Will create a file if it doesn't exist, if it does then it will append whatever you write to it which could be good for a log file let's see a brief sample
 
-> ***NOTE***: We will ignore threading issues or similar things to keep it simple but you should not use this naïve approach to logging
+> **_NOTE_**: We will ignore threading issues or similar things to keep it simple but you should not use this naïve approach to logging
 
 > To Run this, copy this content into a file named `script.fsx` (or whatever name you prefer) and type:
+>
 > - `dotnet fsi script.fsx`
+
 ```fsharp
 #r "nuget: Ply"
 
@@ -151,12 +153,12 @@ let queue = new Queue<string>()
 
 let log (logValue: string) = queue.Enqueue logValue
 
-/// naive approach to logging 
+/// naive approach to logging
 let flushToLog () =
     task {
         let path = Path.Combine("./", "sample.log")
         /// note the use of ***use*** and not ***let***
-        /// since this is a disposable stream 
+        /// since this is a disposable stream
         /// we use the automatic disposing mechanisms in .NET
         use file = File.OpenWrite(path)
 
@@ -191,6 +193,7 @@ task {
 // so the fsi can finish executing the tasks
 |> Async.RunSynchronously
 ```
+
 that script defines a `log` function that puts a string in a string `Queue`.
 
 It also defines a function `flushToLog` which when called opens a file called **sample.log** and as log as the `Queue` has strings on it, it moves the `FileStream`'s position to the end, it takes a string from the queue converts it into a `UTF8 byte array` which writes asynchronously (as if you were using async/await in C# or javascript) then the file moves out of scope and gets disposed automatically
@@ -208,15 +211,18 @@ let flushToLog () =
         queue.Clear()
     }
 ```
+
 comment and un-comment the lines starting with `do!` to see the difference between each other 😀
 
 to read the content's we can use the following API's and their async counterparts
+
 - File.ReadAllLines - returns an array of strings
 - File.ReadAllText - returns the whole content as a single string
 
 these will give us a simpler way to deal with the contents rather than using the StreamReader or the FileStream and manually read bytes and move the position of the stream
 
 > To Run this, copy this content into a file named `script.fsx` (or whatever name you prefer) and type:
+>
 > - `dotnet fsi script.fsx`
 
 ```fsharp
@@ -239,11 +245,13 @@ task {
 // so the fsi can finish executing the tasks
 |> Async.RunSynchronously
 ```
+
 that will print the content of the file to the console and the lines in the file, in my case since I've played with it a couple of times it told me my log has 90 lines
 
 Let's move back to operations on the file as a whole since we now kind of know how to open/read/write/delete a file what about copying and moving files around?
 
 > To Run this, copy this content into a file named `script.fsx` (or whatever name you prefer) and type:
+>
 > - `dotnet fsi script.fsx`
 
 ```fsharp
@@ -253,9 +261,11 @@ let path = Path.Combine("./", "sample.log")
 let filename = Path.ChangeExtension(path, "txt")
 File.Copy(path, filename)
 ```
-We used the `Copy` method this time plus a nice utility of the `Path` class, after running that you should have a *New* file with the name **sample.txt**
+
+We used the `Copy` method this time plus a nice utility of the `Path` class, after running that you should have a _New_ file with the name **sample.txt**
 
 > To Run this, copy this content into a file named `script.fsx` (or whatever name you prefer) and type:
+>
 > - `dotnet fsi script.fsx`
 
 ```fsharp

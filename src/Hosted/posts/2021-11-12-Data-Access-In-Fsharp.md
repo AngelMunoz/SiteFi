@@ -1,7 +1,7 @@
 ---
 title: Data Access in Fsharp
 subtitle: ~
-categories: fsharp,sql,mongodb,dotnet
+categories: fsharp,sql,mongodb,dotnet,simplethingsfsharp
 abstract: Need to access a datasource like MySQL, MSSQL or PostgreSQL F# got you covered!...
 date: 2021-11-12
 language: en

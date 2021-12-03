@@ -1,19 +1,19 @@
 ---
 title: Doing MVC in F# and Saturn
 subtitle: ~
-categories: fsharp,mvc,saturn,dotnet
+categories: fsharp,mvc,saturn,dotnet,simplethingsfsharp
 abstract: Simple things in F    If you come from PHP, Javascript this might help you understand a...
 date: 2021-07-16
 language: en
 ---
 
-[Ply]: https://github.com/crowded/ply/
-[Saturn]: https://saturnframework.org/
-[Yii Framework]: https://www.yiiframework.com/doc/
-[Sails.js]: https://sailsjs.com/
-[.NET SDK]: https://dotnet.microsoft.com/download
-[SAFE]: https://safe-stack.github.io/docs/quickstart/#create-your-first-safe-app
-[Htmx]: https://htmx.org/
+[ply]: https://github.com/crowded/ply/
+[saturn]: https://saturnframework.org/
+[yii framework]: https://www.yiiframework.com/doc/
+[sails.js]: https://sailsjs.com/
+[.net sdk]: https://dotnet.microsoft.com/download
+[safe]: https://safe-stack.github.io/docs/quickstart/#create-your-first-safe-app
+[htmx]: https://htmx.org/
 
 ## Simple things in F#
 
@@ -24,6 +24,7 @@ Today we'll try to keep it as simple as possible but no promises, since this ent
 When I started my programming career about 6~7 years ago my first job was about doing PHP applications for a Customs Agency I used to use [Yii Framework] which is an MVC Framework for PHP. Later on in my journey I ended up using [Sails.js] which is another MVC framework (this time for node though). In F# we could try to go with `dotnet new mvc -lang F#` or `dotnet new webapp` but that would be the least idiomatic F# solution since ASP.NET assumes (at least on net5.0 and lower) that you will use OOP and while that's certainly something that can be done in F# it's not the ideal solution.
 
 ### Saturn
+
 Before checking out the project let's talk about Saturn a bit
 
 > Saturn
@@ -32,12 +33,13 @@ Before checking out the project let's talk about Saturn a bit
 
 Saturn is a functional first MVC framework that provides an idiomatic F# way to do backend development. Built on top of ASP.NET and Giraffe so feel free to enjoy performance, specially if you come from Javascript/Python
 
-> Saturn has an opinionated and stablished way on how to do things, please check the Saturn documentation for a more *normal* way to do things within Saturn realm or check the [SAFE] stack documentation which has a more complete solution if you're looking for a production ready stack.
+> Saturn has an opinionated and stablished way on how to do things, please check the Saturn documentation for a more _normal_ way to do things within Saturn realm or check the [SAFE] stack documentation which has a more complete solution if you're looking for a production ready stack.
 
 Having that said... let's start
 
 ## The Project
-The main point of this is to explain the parts of a Saturn application, not necessarily to tell you how to do MVC with Saturn, as mentioned before, there are existing docs (both Saturn and SAFE) that focus on that. Please keep that in mind as we continue 
+
+The main point of this is to explain the parts of a Saturn application, not necessarily to tell you how to do MVC with Saturn, as mentioned before, there are existing docs (both Saturn and SAFE) that focus on that. Please keep that in mind as we continue
 
 You can follow me on your machine if you have the [.NET SDK] installed then you can type
 
@@ -68,7 +70,8 @@ Program.fs
 ProjectName.fsproj
 README.md
 ```
- Let's start by inspecting the `Program.fs` file.
+
+Let's start by inspecting the `Program.fs` file.
 
 ```fsharp
 module ProjectName.Program
@@ -138,7 +141,7 @@ let main args =
 
 As it can be seen in the `Program.fs` file we take care of the configuration, if we wanted to use CSRF, Cookies, JWT, Dependency Injection (which I don't think is needed unless your library really really needs it) authentication or authorization it would be here in the application builder.
 
-Let's continue with the router contents. Our first router is `defaultView` which handles `/index.html` and similar calls with  `Home.Index()` which is defined inside `ProjectName.Views`
+Let's continue with the router contents. Our first router is `defaultView` which handles `/index.html` and similar calls with `Home.Index()` which is defined inside `ProjectName.Views`
 
 ```fsharp
 namespace ProjectName.Views
@@ -175,13 +178,11 @@ module Home =
 > {% link https://dev.to/tunaxor/generating-html-in-f-4h5b %}
 > Where I described the Giraffe.ViewEngine syntax and how can you use it to produce HTML
 
-
 To begin with, this is an XmlNode list which is basically a an HTML page but written in F#
 
-The HTML tas are defined as 
+The HTML tas are defined as
 
 > `tag [(* attributes *)] [(* contents (XmlNodes) *)]`
-
 
 So our `Index()` function is basically calling a `Default(content, Title)` static method on the `Layout` class if you come from MVC applications from other places it is not uncommon to use a master layout and just put your content in there.
 if we take out the partial call and our wrapper list the code looks like this
@@ -205,7 +206,7 @@ Hopefully you can see the pattern in there each tag has a list for attributes an
 
 There are other DSL Flavors out there like https://github.com/dbrattli/Feliz.ViewEngine (a react based DSL) or https://github.com/giraffe-fsharp/Giraffe.Razor (if you like razor pages) so if you feel this is too much, don't worry you can still write plain HTML (cshtml) or React jsx like code.
 
-> We're also using a couple of helpers defined in `BaseViews.fs` we will not review those for the sake of keeping this *simple* what we need to know is that there's a layout that we're filling with content and that there's a `Navbar` partial we're using at the beginning of our content.
+> We're also using a couple of helpers defined in `BaseViews.fs` we will not review those for the sake of keeping this _simple_ what we need to know is that there's a layout that we're filling with content and that there's a `Navbar` partial we're using at the beginning of our content.
 
 We're essentially defining an HTML view that we will render with `htmlView` from `Giraffe.Core`.
 
@@ -238,7 +239,7 @@ module Controller =
 
     let private deleteTodo = (* ... code ... *)
 
-    /// only TodoController is exposed which is used 
+    /// only TodoController is exposed which is used
     /// by `forward "/todos" TodoController` in the browserRouter
 
     let TodoController =
@@ -270,7 +271,7 @@ Let's check the first three functions
 
 ```fsharp
 // make the Model and View modules available
-open ProjectName.Todos 
+open ProjectName.Todos
 
 let private todos =
     fun ctx ->
@@ -315,9 +316,11 @@ let private createTodo =
             return! Controller.renderHtml ctx view
         }
 ```
+
 The rest of the functions perform more-less the same functionality given their name either they update or find a particular todo. Lastly let's just check for a bit the `delete` function.
 
 In this case we used [Htmx] in the frontend to do an `ajax` call, there will be cases where we don't want to render completely a new HTML page so we use some kind of javascript code in the frontend (be it a library or hand written code) that will make a request to the server we can chose to act accordingly in those cases as well
+
 ```fsharp
 let private deleteTodo =
     fun (ctx: HttpContext) id ->
@@ -336,6 +339,7 @@ let private deleteTodo =
 Following our MVC code, we saw already the `Controller` let's check the `Model` now.
 
 The Model module simply contains the types we're using in our controller, either from the request as the parameter or as the return value inside the HTML responses.
+
 ```fsharp
 
 
@@ -435,19 +439,16 @@ let Index (todos: Todo list) : XmlNode =
     Layout.Default(content, "Todos")
 ```
 
-I'm not really good composing UI's with F# I'm an HTML person myself, but you can think each function as a *component* and every time you want to put content inside you're using a *slot* you can define as many functions as you need to describe your UI's as long as it makes it maintainable to you.
-
+I'm not really good composing UI's with F# I'm an HTML person myself, but you can think each function as a _component_ and every time you want to put content inside you're using a _slot_ you can define as many functions as you need to describe your UI's as long as it makes it maintainable to you.
 
 So that's it! Hopefully this will help you get familiar with the core aspects of an MVC way to do things in Saturn and F# and also remember that this is merely to explore and explain some ways to do things without other things in the stack like fable, databases, authentication, and many other things that make it hard to learn.
 
 Once you start grasping these concepts you can start adding more and more until you get the whole idea.
-
 
 ## Final thoughts
 
 Also as I mentioned several times in the beginning of the article... Consider using [Saturn]'s defaults and [SAFE] docs for something that you're going to use in a production setup.
 
 Saturn is a powerful framework with a functional touch for your MVC style projects. you can easily use it for RESTful API's as well so don't miss the chance to try it out!
-
 
 As always, feel free to ping me on twitter or in the comments below

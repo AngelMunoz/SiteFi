@@ -1,52 +1,55 @@
 ---
 title: Web Scrapping with F#
 subtitle: ~
-categories: fsharp,webscrapping,playwright,dotnet
+categories: fsharp,webscrapping,playwright,dotnet,simplethingsfsharp
 abstract: You may have done some web scrapping with python before but, have you with F#?...
 date: 2021-08-18
 language: en
 ---
 
-[Playwright]: https://playwright.dev/dotnet/
-[.NET SDK]: https://dotnet.microsoft.com/download
-[Ionide]: https://ionide.io/
-[Rider]: https://www.jetbrains.com/rider/
-[Visual Studio]: https://visualstudio.microsoft.com/vs/community/
-[Task]: https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task?view=net-5.0
-[Async]: https://docs.microsoft.com/en-us/dotnet/fsharp/tutorials/asynchronous-and-concurrent-programming/async
+[playwright]: https://playwright.dev/dotnet/
+[.net sdk]: https://dotnet.microsoft.com/download
+[ionide]: https://ionide.io/
+[rider]: https://www.jetbrains.com/rider/
+[visual studio]: https://visualstudio.microsoft.com/vs/community/
+[task]: https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task?view=net-5.0
+[async]: https://docs.microsoft.com/en-us/dotnet/fsharp/tutorials/asynchronous-and-concurrent-programming/async
 
-> ***NOTA***: The content of this post is based on this code, check it for the full example.
+> **_NOTA_**: The content of this post is based on this code, check it for the full example.
 >
 > https://github.com/AngelMunoz/Escalin
 
-
 # Simple things in F#
-Hey there, this is the next entry in ***Simple Things in F#***
+
+Hey there, this is the next entry in **_Simple Things in F#_**
 
 If you've ever wanted to pull data periodically from a website, or you are a QA automation person looking to do E2E (end to end) testing, then [Playwright] might be an option for you. Similar to Cypress or PhantomJS, Playwright is a library that allows you to automate ineractions with websites, you can even take screenshots and PDFs!
 
 Playwright offers access to the following browsers
 
 - Chromium
-    - Edge
-    - Chrome
+  - Edge
+  - Chrome
 - Firefox
 - Webkit
 
 Normally these tools are made with javascript in mind (playwright is no exception) but, Playwright offers .NET libraries as well so if you like to use F#, VB or even C#, you can do some web scrapping, E2E with playwright.
 
 ## Pre-requisites
+
 We will focus on F# here so you are required to have the [.NET SDK] installed on your machine, also you will need the playwright global cli tool (there's an npm version as well if you prefer to install that
 
 ```powershell
 dotnet tool install --global Microsoft.Playwright.CLI
 ```
+
 Once installed we can create a new console project in the following way:
 
 ```powershell
-# feel free to use VB o C# if you prefer it 
+# feel free to use VB o C# if you prefer it
 dotnet new console -lang F# -o Escalin
 ```
+
 In this case I made a poject called `Escalin`, once created the project we'll install these dependencies.
 
 ```powershell
@@ -60,7 +63,7 @@ dotnet build
 playwright install
 ```
 
-> ***SCRIPTING***: You can actually use playwright with F# scripts as well but you will need to install the playwright browsers first on that machine either by creating a dummy project and run the dotnet tool or using playwright npm tool to download them
+> **_SCRIPTING_**: You can actually use playwright with F# scripts as well but you will need to install the playwright browsers first on that machine either by creating a dummy project and run the dotnet tool or using playwright npm tool to download them
 
 Once we have our dependencies ready, we can start digging in with the code in VSCode using [Ionide], [Rider] or [Visual Studio].
 
@@ -88,7 +91,7 @@ open System.IO
 // Json serialization
 open System.Text.Json
 
-// Playwright offers different browsers so let's 
+// Playwright offers different browsers so let's
 // declare a Discrimiated union with our choices
 type Browser =
     | Chromium
@@ -113,7 +116,6 @@ type Post =
       tags: string array
       date: string }
 ```
-
 
 Also, our main's goal is to have something like this:
 
@@ -145,12 +147,10 @@ in the case of `Async.AwaitTask` and `Async.RunSynchronously` it's not necessary
 > if we want to visualize that in another way, we can think of it as this:
 >
 > `64 |> addNumbers 10` is equivalent to `addNumbers 10 64`
->
-
 
 Let's get started with `getBrowser`
 
-> ***NOTE***: I changed the parameters here vs the source code be more readable
+> **_NOTE_**: I changed the parameters here vs the source code be more readable
 
 ```fsharp
 let getBrowser (kind: Browser) (getPlaywright: Task<IPlaywright>) =
@@ -241,9 +241,9 @@ Before we get to the next one, we need to check what is `convertElementToPost` d
 5. The content will be split in an array where the text has `...`
 6. For the summary we'll get the first element of the array or return an empty string
 7. The second element will be divided where we have the `\n` character
-    1. To the first element of that array, we'll divide it as well where we have a `#` to get our tags.
-    2. Trim the strings from extra spaces and filter out empty strings
-    3. The second element will get trimmed from spaces as well and that will be our date
+   1. To the first element of that array, we'll divide it as well where we have a `#` to get our tags.
+   2. Trim the strings from extra spaces and filter out empty strings
+   3. The second element will get trimmed from spaces as well and that will be our date
 
 All of this, based on knowing that the content might come like this
 
@@ -326,7 +326,7 @@ let writePostsToFile (getPosts: Task<Post array>) =
             opts
 
         let json =
-            // serialize the array with the base class library System.Text.Json 
+            // serialize the array with the base class library System.Text.Json
             JsonSerializer.SerializeToUtf8Bytes(posts, opts)
 
         printfn "Saving to \"./posts.json\""
@@ -337,7 +337,7 @@ let writePostsToFile (getPosts: Task<Post array>) =
 
 Once we're done with all of that we just apply the result to `Async.AwaitTask` given that F#'s Async/Task aren't the same,
 
-> check  [Async] and [Task] docs to have a better overview 
+> check [Async] and [Task] docs to have a better overview
 
 F# doesn't really have an async `main` so that's why we run that last task synchronously and return 0 at the end
 

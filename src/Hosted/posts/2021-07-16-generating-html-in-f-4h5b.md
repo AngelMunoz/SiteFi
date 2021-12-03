@@ -1,17 +1,17 @@
 ---
 title: Generating HTML in F#
 subtitle: ~
-categories: fsharp,templates,html,dotnet
+categories: fsharp,templates,html,dotnet,simplethingsfsharp
 abstract: Simple things in FSharp   Hello there, this is the 4th entry in Simple Things F#.  Today...
 date: 2021-07-16
 language: en
 ---
 
-[Scriban]: https://github.com/scriban/scriban
-[Giraffe.ViewEngine]: https://giraffe.wiki/view-engine
-[Feliz.ViewEngine]: https://github.com/dbrattli/Feliz.ViewEngine
-[Fable]: https://fable.io/docs/
-[Giraffe.Razor]: https://github.com/giraffe-fsharp/Giraffe.Razor
+[scriban]: https://github.com/scriban/scriban
+[giraffe.viewengine]: https://giraffe.wiki/view-engine
+[feliz.viewengine]: https://github.com/dbrattli/Feliz.ViewEngine
+[fable]: https://fable.io/docs/
+[giraffe.razor]: https://github.com/giraffe-fsharp/Giraffe.Razor
 
 ## Simple things in FSharp
 
@@ -40,6 +40,7 @@ for example creating `<div class="my-class"></div>` would be something like this
 > attributes are prefixed with an underscore `_` to prevent clashing with reserved words in F#
 
 Let's take a look at a simple page with a header
+
 ```fsharp
 #r "nuget: Giraffe.ViewEngine"
 
@@ -57,6 +58,7 @@ printfn "%s" document
 ```
 
 > To Run this, copy this content into a file named `script.fsx` (or whatever name you prefer) and type:
+>
 > - `dotnet fsi run script.fsx`
 
 we assign the result of the html function to view, then we just render the document as a string, we can then follow up and create a file with the IO API's we saw earlier in this series.
@@ -65,14 +67,13 @@ we assign the result of the html function to view, then we just render the docum
 
 you can also create functions to pre-define aspects of your views and override values if you deem it necessary
 
-
 ```fsharp
 #r "nuget: Giraffe.ViewEngine"
 
 open Giraffe.ViewEngine
 
 
-let card attributes = 
+let card attributes =
     article [ yield! attributes; _class "card is-green"]
 
 let cardFooter attributes =
@@ -81,7 +82,7 @@ let cardFooter attributes =
 let cardHeader attributes =
     header [ yield! attributes; _class "card-header no-icons"]
 
-let mySection = 
+let mySection =
     div [] [
         card [ _id "my-card" ] [
             cardHeader [] [
@@ -104,10 +105,10 @@ printfn "%s" document
 ```
 
 > To Run this, copy this content into a file named `script.fsx` (or whatever name you prefer) and type:
+>
 > - `dotnet fsi run script.fsx`
 
 so creating new "tags" is basically just creating a new function that accepts attributes and contents.
-
 
 ### Feliz
 
@@ -115,13 +116,12 @@ The original Feliz DSL was made by @zaidajaj (he produces AMAZING OSS work for F
 
 > I'm not ultra well versed in composition techniques with Feliz so take the following examples with a grain of salt (you can also check the Elmish book https://zaid-ajaj.github.io/the-elmish-book/) for more information about Fable and Feliz
 
-
 ```fsharp
 #r "nuget: Feliz.ViewEngine"
 
 open Feliz.ViewEngine
 
-let view = 
+let view =
     Html.html [
         Html.head [ Html.title "Feliz" ]
         Html.body [
@@ -135,8 +135,8 @@ printfn "%s" document
 ```
 
 > To Run this, copy this content into a file named `script.fsx` (or whatever name you prefer) and type:
+>
 > - `dotnet fsi run script.fsx`
-
 
 when you open the `Feliz.ViewEngine` namespace you have access to the `Html` and `prop` types these have all the tags and attributes you may need to construct HTML content. if you are feeling tired of writing `prop` and `Html` you can even `open type` those classes and access all of their static methods
 
@@ -147,7 +147,7 @@ open Feliz.ViewEngine
 open type Html
 open type prop
 
-let view = 
+let view =
     html [
         head [ title "Feliz" ]
         body [
@@ -161,8 +161,8 @@ printfn "%s" document
 ```
 
 > To Run this, copy this content into a file named `script.fsx` (or whatever name you prefer) and type:
+>
 > - `dotnet fsi run script.fsx`
-
 
 that will save you a few keystrokes as well! you might run into some naming clashes but you can also just use qualified `prop` and `Html` if you need it.
 
@@ -176,7 +176,7 @@ open type Html
 open type prop
 
 // custom card, but you can't customize it's classes only the children elements
-let card (content: ReactElement seq) = 
+let card (content: ReactElement seq) =
     article [
         className "card is-green"
         children content
@@ -188,21 +188,21 @@ let cardFooter content =
         yield! content
     ]
 
-let slotedHeader (content: ReactElement seq) = 
+let slotedHeader (content: ReactElement seq) =
     header [
         className "card-header"
         // pass the contents directly to the children property
         children content
     ]
 
-let customizableHeader content = 
+let customizableHeader content =
     header [
         className "card-header"
         // allow any property to be set
         yield! content
     ]
 
-let card1 = 
+let card1 =
     div [
         card [
             // our slottedHeader only allows to pass children not props
@@ -218,14 +218,14 @@ let card1 =
         ]
     ]
 
-let card2 = 
+let card2 =
     div [
         card [
             /// our customizable header allows us
             /// to pass properties as well as children elements
             customizableHeader [
                 children (h1 [ text "This is my custom card"])
-                className "custom class" 
+                className "custom class"
             ]
             p [ text "this is the body of the card" ]
             cardFooter [
@@ -242,23 +242,22 @@ printfn "%s\n\n%s" r1 r2
 ```
 
 > To Run this, copy this content into a file named `script.fsx` (or whatever name you prefer) and type:
+>
 > - `dotnet fsi run script.fsx`
 
 But there's a thing that will happen here, unlike Giraffe.ViewEngine Feliz doesn't strip existing props so our header will end up like this
 
 ```html
 <header class="card-header" class="custom class">
-    <h1>This is my custom card</h1>
+  <h1>This is my custom card</h1>
 </header>
 ```
 
 In HTML the last defined property always wins, so keep in mind that depending on your intent you might need properties or children ant that might be the deciding factor between using one way or the other.
 
-
-
 ### Scriban
 
-If you like me can't simply just leave HTML because of *reasons* there are also Text based alternatives like [Scriban] which allow you to just write an html file and just fill it with data
+If you like me can't simply just leave HTML because of _reasons_ there are also Text based alternatives like [Scriban] which allow you to just write an html file and just fill it with data
 
 ```fsharp
 #r "nuget: Scriban"
@@ -267,8 +266,8 @@ open Scriban
 
 type Product = { name: string; price: float; description: string }
 
-let renderProducts products = 
-    let html = 
+let renderProducts products =
+    let html =
         """
         <ul id='products'>
         {{ for product in products }}
@@ -294,14 +293,14 @@ printfn "%s" result
 ```
 
 > To Run this, copy this content into a file named `script.fsx` (or whatever name you prefer) and type:
+>
 > - `dotnet fsi run script.fsx`
-
 
 If you have ever used jinja, moustache, handlebars, liquid and similar template engines it will look familiar to you basically here we define an HTML string (which can be read from an HTML file in disk) we parse it, then render it with a data source (in case we need one)
 
 > scriban has a TON of helpers in it's scripting language (like those pipes that are truncating a string to 15 characters)
 
-If you want to compose components in the scriban templates the approach is way way different 
+If you want to compose components in the scriban templates the approach is way way different
 
 ```fsharp
 #r "nuget: Scriban"
@@ -309,12 +308,12 @@ If you want to compose components in the scriban templates the approach is way w
 open System
 open Scriban
 
-type Product = 
+type Product =
     { name: string;
-      price: float; 
+      price: float;
       details : {| description: string |} }
 // create a fragment/component html string
-let detailDiv = 
+let detailDiv =
     """
     <details>
         <summary> {{ product.details.description | string.truncate 15 }} <summary>
@@ -322,8 +321,8 @@ let detailDiv =
     </details>
     """
 
-let renderProducts products = 
-    let html = 
+let renderProducts products =
+    let html =
         // here with the help of sprintf
         // and {{ "%s" | object.eval_template }}
         // we use F# to pre-process the template
@@ -347,7 +346,7 @@ let result =
     renderProducts [
         { name = "Shoes"
           price = 20.50
-          details = 
+          details =
             {| description = "The most shoes you'll ever see" |} }
         { name = "Potatoes"
           price = 1.50
@@ -363,13 +362,12 @@ printfn "%s" result
 ```
 
 > To Run this, copy this content into a file named `script.fsx` (or whatever name you prefer) and type:
+>
 > - `dotnet fsi run script.fsx`
-
 
 now, keep in mind that you're using F# and this you can modify the strings before passing them to the final template before parsing it but this leads to handling strings here and there and possibly getting into regex territory and to be honest I don't like that. I think this approach is best suited to templates you already set and know what the model for them is and that they are not super dynamic, you can still perform a lot of dynamic operations with the scriban scripting capabilities inside the template.
 
 also keep in mind that if you really need it, you can parse and compile multiple HTML templates and then pass them together to a layout and just do a final render but I'm not aware of how performant/useful that is in practice
-
 
 ## Closing Thoughts
 

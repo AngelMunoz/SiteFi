@@ -1,17 +1,17 @@
 ---
 title: Generando HTML en F#
 subtitle: ~
-categories: fsharp,templates,html,dotnet
+categories: fsharp,templates,html,dotnet,simplethingsfsharp
 abstract: Cosas simples en fsharp El dia de hoy vamos a ver formas de producir archivos HTML con F#...
 date: 2021-07-16
 language: es
 ---
 
-[Scriban]: https://github.com/scriban/scriban
-[Giraffe.ViewEngine]: https://giraffe.wiki/view-engine
-[Feliz.ViewEngine]: https://github.com/dbrattli/Feliz.ViewEngine
-[Fable]: https://fable.io/docs/
-[Giraffe.Razor]: https://github.com/giraffe-fsharp/Giraffe.Razor
+[scriban]: https://github.com/scriban/scriban
+[giraffe.viewengine]: https://giraffe.wiki/view-engine
+[feliz.viewengine]: https://github.com/dbrattli/Feliz.ViewEngine
+[fable]: https://fable.io/docs/
+[giraffe.razor]: https://github.com/giraffe-fsharp/Giraffe.Razor
 
 ## Cosas simples en fsharp
 
@@ -40,6 +40,7 @@ por ejemplo para crear `<div class="mi-clase"></div>` seria algo como esto:
 > Los atributos tienen un prefijo de un guion bajo `_` para prevenir choques con palabras reservadas de F# (como class y type).
 
 Vamos a ver una pagina sencilla con un _header_
+
 ```fsharp
 #r "nuget: Giraffe.ViewEngine"
 
@@ -56,16 +57,15 @@ let document = RenderView.AsString.htmlDocument view
 printfn "%s" document
 ```
 
-> Para correr esto, copia el contenido en algun archivo con terminacion ***.fsx*** (como `script.fsx`) y teclea en la terminal:
-> - `dotnet fsi run script.fsx`
-> ***NOTA***: para esto es necesario tener instalado el [SDK de .NET](https://dotnet.microsoft.com/download)
+> Para correr esto, copia el contenido en algun archivo con terminacion **_.fsx_** (como `script.fsx`) y teclea en la terminal:
+>
+> - `dotnet fsi run script.fsx` > **_NOTA_**: para esto es necesario tener instalado el [SDK de .NET](https://dotnet.microsoft.com/download)
 
 En este caso, asignamos los resultados de la funcion de html a la variable _`vista`_, luego renderizamos el contenido como una cadena de texto. Si has seguido esta serie de posts, te daras una idea de que puedes usar las funciones del _namespace_ `System.IO` para producir un archivo de HTML con ese contenido
 
 > Si estas usando Saturn/Giraffe como tu framework web, no es necesario hacer el render manual, estos frameworks tienen funciones utiltarias que se encargan de ello (como lo veremos en el siguiente post).
 
 Tambien puedes crear funciones para _pre-definir_ aspectos de tus vistas o incluso sobre-escribir valores en caso de que lo consideres necesario, por ejemplo:
-
 
 ```fsharp
 #r "nuget: Giraffe.ViewEngine"
@@ -82,7 +82,7 @@ let cardFooter attributes =
 let cardHeader attributes =
     header [ yield! attributes; _class "card-header no-icons"]
 
-let mySection = 
+let mySection =
     div [] [
         card [ _id "my-card" ] [
             cardHeader [] [
@@ -103,9 +103,10 @@ let document = RenderView.AsString.htmlNode mySection
 
 printfn "%s" document
 ```
-> Para correr esto, copia el contenido en algun archivo con terminacion ***.fsx*** (como `script.fsx`) y teclea en la terminal:
-> - `dotnet fsi run script.fsx`
-> ***NOTA***: para esto es necesario tener instalado el [SDK de .NET](https://dotnet.microsoft.com/download)
+
+> Para correr esto, copia el contenido en algun archivo con terminacion **_.fsx_** (como `script.fsx`) y teclea en la terminal:
+>
+> - `dotnet fsi run script.fsx` > **_NOTA_**: para esto es necesario tener instalado el [SDK de .NET](https://dotnet.microsoft.com/download)
 
 > **Nota**: yield! es una palabra reservada que asigna los contenidos de alguna secuencia (`IEnumerable<T>`) a la secuencia actual.
 > Por ejemplo: `let a = [1;2;3]` `let b = [yield! a; 4;5;6]`, `b` ahora contiene `[1;2;3;4;5;6]`
@@ -123,7 +124,7 @@ El DSL original de Feliz fue hecho por [Zaid Ajaj](https://twitter.com/zaid_ajaj
 
 open Feliz.ViewEngine
 
-let view = 
+let view =
     Html.html [
         Html.head [ Html.title "Feliz" ]
         Html.body [
@@ -135,10 +136,10 @@ let document = Render.htmlDocument view
 
 printfn "%s" document
 ```
-> Para correr esto, copia el contenido en algun archivo con terminacion ***.fsx*** (como `script.fsx`) y teclea en la terminal:
-> - `dotnet fsi run script.fsx`
-> ***NOTA***: para esto es necesario tener instalado el [SDK de .NET](https://dotnet.microsoft.com/download)
 
+> Para correr esto, copia el contenido en algun archivo con terminacion **_.fsx_** (como `script.fsx`) y teclea en la terminal:
+>
+> - `dotnet fsi run script.fsx` > **_NOTA_**: para esto es necesario tener instalado el [SDK de .NET](https://dotnet.microsoft.com/download)
 
 Cuando abres el _namespace_ `Feliz.ViewEngine` tienes acceso a las clases estaticas `Html` y `prop`, estas contienen las etiquetas y los atributos que puedes necesitar para construir HTML, si te sientes cansado de escribir `Html.etiqueta` y `prop.atributo` puedes usar `open type Html` y `open type prop` que funcionan como si abrieras estas como si fuera un _namespace_.
 
@@ -163,9 +164,10 @@ let document = Render.htmlDocument view
 
 printfn "%s" document
 ```
-> Para correr esto, copia el contenido en algun archivo con terminacion ***.fsx*** (como `script.fsx`) y teclea en la terminal:
-> - `dotnet fsi run script.fsx`
-> ***NOTA***: para esto es necesario tener instalado el [SDK de .NET](https://dotnet.microsoft.com/download)
+
+> Para correr esto, copia el contenido en algun archivo con terminacion **_.fsx_** (como `script.fsx`) y teclea en la terminal:
+>
+> - `dotnet fsi run script.fsx` > **_NOTA_**: para esto es necesario tener instalado el [SDK de .NET](https://dotnet.microsoft.com/download)
 
 usando `open type` nos salvamos de unos cuantos tecleos, pero podemos tener algunos problemas de choques con los nombres, en casos como esos, siempre puedes volver a escribir `Html.etiqueta` y `prop.atributo` en caso de ser necesario.
 
@@ -179,7 +181,7 @@ open type Html
 open type prop
 
 // card personalizada, no puedes personalizar sus clases, pero si sus hijos
-let card (content: ReactElement seq) = 
+let card (content: ReactElement seq) =
     article [
         className "card is-green"
         children content
@@ -191,21 +193,21 @@ let cardFooter content =
         yield! content
     ]
 
-let slotedHeader (content: ReactElement seq) = 
+let slotedHeader (content: ReactElement seq) =
     header [
         className "card-header"
         // pasamos el contenido directo a los hijos
         children content
     ]
 
-let customizableHeader content = 
+let customizableHeader content =
     header [
         className "card-header"
         // hagase garras y ponga lo que quiera
         yield! content
     ]
 
-let card1 = 
+let card1 =
     div [
         card [
             // solo permitimos hijos, mas no propiedades
@@ -221,14 +223,14 @@ let card1 =
         ]
     ]
 
-let card2 = 
+let card2 =
     div [
         card [
             // En este caso nuestro encabezado personalizado nos permite
             // pasar propiedades asi como elementos
             customizableHeader [
                 children (h1 [ text "This is my custom card"])
-                className "custom class" 
+                className "custom class"
             ]
             p [ text "this is the body of the card" ]
             cardFooter [
@@ -243,18 +245,20 @@ let r2 = Render.htmlView card2
 
 printfn "%s\n\n%s" r1 r2
 ```
-> Para correr esto, copia el contenido en algun archivo con terminacion ***.fsx*** (como `script.fsx`) y teclea en la terminal:
-> - `dotnet fsi run script.fsx`
-> ***NOTA***: para esto es necesario tener instalado el [SDK de .NET](https://dotnet.microsoft.com/download)
+
+> Para correr esto, copia el contenido en algun archivo con terminacion **_.fsx_** (como `script.fsx`) y teclea en la terminal:
+>
+> - `dotnet fsi run script.fsx` > **_NOTA_**: para esto es necesario tener instalado el [SDK de .NET](https://dotnet.microsoft.com/download)
 
 Pero... aqui va a suceder algo interesante, a diferencia de `Giraffe.ViewEngine`, Feliz no remueve propiedades existentes, asi que nuestro header va a quedar algo asi:
 
 ```html
 <header class="card-header" class="custom class">
-    <h1>This is my custom card</h1>
+  <h1>This is my custom card</h1>
 </header>
 ```
-Y en el caso de HTML, la ultima pripiedad siempre gana, asi que ten esto en cuenta cuando quieras sobre-escribir algo o algo  no se vea como deberia. Tambien puede ser un factor determinante de como es que podrias usar `yield!`.
+
+Y en el caso de HTML, la ultima pripiedad siempre gana, asi que ten esto en cuenta cuando quieras sobre-escribir algo o algo no se vea como deberia. Tambien puede ser un factor determinante de como es que podrias usar `yield!`.
 
 ### Scriban
 
@@ -267,8 +271,8 @@ open Scriban
 
 type Product = { name: string; price: float; description: string }
 
-let renderProducts products = 
-    let html = 
+let renderProducts products =
+    let html =
         """
         <ul id='products'>
         {{ for product in products }}
@@ -292,9 +296,10 @@ let result =
 
 printfn "%s" result
 ```
-> Para correr esto, copia el contenido en algun archivo con terminacion ***.fsx*** (como `script.fsx`) y teclea en la terminal:
-> - `dotnet fsi run script.fsx`
-> ***NOTA***: para esto es necesario tener instalado el [SDK de .NET](https://dotnet.microsoft.com/download)
+
+> Para correr esto, copia el contenido en algun archivo con terminacion **_.fsx_** (como `script.fsx`) y teclea en la terminal:
+>
+> - `dotnet fsi run script.fsx` > **_NOTA_**: para esto es necesario tener instalado el [SDK de .NET](https://dotnet.microsoft.com/download)
 
 Si has usado Jinja, moustache, handlebars, como lo mencionaba la sintaxis te sera similar, basicamente solo tienes que definir HTML y hacerle un parsing/render con una fuente de datos (en caso de que uses variables en el template)
 
@@ -308,12 +313,12 @@ En caso de que quieras componer vistas en Scriban, el acercamiento que se tiene 
 open System
 open Scriban
 
-type Product = 
+type Product =
     { name: string;
-      price: float; 
+      price: float;
       details : {| description: string |} }
 // crea un fragmento/componente en una cadena de texto con html
-let detailDiv = 
+let detailDiv =
     """
     <details>
         <summary> {{ product.details.description | string.truncate 15 }} <summary>
@@ -321,8 +326,8 @@ let detailDiv =
     </details>
     """
 
-let renderProducts products = 
-    let html = 
+let renderProducts products =
+    let html =
         /// aqui usamos una funcion de F# `sprintf`
         /// y {{ "%s" | object.eval_template }}
         /// en este caso usamos F# para pre procesar ese template
@@ -346,7 +351,7 @@ let result =
     renderProducts [
         { name = "Zapatos"
           price = 20.50
-          details = 
+          details =
             {| description = "Los Zapatos mas Zapatezcos que veras..." |} }
         { name = "Papas"
           price = 1.50
@@ -360,9 +365,10 @@ let result =
 
 printfn "%s" result
 ```
-> Para correr esto, copia el contenido en algun archivo con terminacion ***.fsx*** (como `script.fsx`) y teclea en la terminal:
-> - `dotnet fsi run script.fsx`
-> ***NOTA***: para esto es necesario tener instalado el [SDK de .NET](https://dotnet.microsoft.com/download)
+
+> Para correr esto, copia el contenido en algun archivo con terminacion **_.fsx_** (como `script.fsx`) y teclea en la terminal:
+>
+> - `dotnet fsi run script.fsx` > **_NOTA_**: para esto es necesario tener instalado el [SDK de .NET](https://dotnet.microsoft.com/download)
 
 Ahora, toma en cuenta que en este caso usamos F# para pre-procesar el template antes de ahora si renderizar el template con Scriban, lo cual es propenso a problemas por que un string aqui, otro alla, y ya nos perdimos lo del maracuya, en casos como estos es simplemente mas sencillo que escribas tus archivos HTML y le dejes el resto a Scriban y el modelo que le pases para que pueda hacer lo que esta hecho para hacer. Si ya conoces como es template y los requerimientos son claros probablemente este sea el mejor acercamiento de los tres en mi opinion.
 
