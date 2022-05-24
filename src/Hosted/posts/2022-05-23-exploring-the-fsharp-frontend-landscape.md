@@ -827,7 +827,7 @@ Sutil comes in second because of it is extremely awesome to have a pure F# frame
 
 Fun.Blazor comes swiftly on second place as well for the Tie because it takes the same concepts sutil uses for state management and takes it a step further
 
-Feliz.Solid comes in third because it also offers a reactive model that is likely going to replace React in a lot of places and codebases in the future. It doesn't suffer of the same problems React has and its future looks Bright, its author was recently (at the time of writing) at Netlify one company that has been hiring a lot of extremely good talent like Rich Harris (author of Svelte) so it can only go up from here while the Feliz integration matures.
+Feliz.Solid comes in third because it also offers a reactive model that is likely going to replace React in a lot of places and codebases in the future. It doesn't suffer of the same problems React has and its future looks Bright, its author was recently hired (at the time of writing) at Netlify so it can only go up from here while the Feliz integration matures.
 
 ## Conclusion
 
