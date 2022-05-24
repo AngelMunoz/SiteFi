@@ -1,4 +1,3 @@
-
 ---
 title: Exploring the F# Frontend Landscape
 subtitle: ~
