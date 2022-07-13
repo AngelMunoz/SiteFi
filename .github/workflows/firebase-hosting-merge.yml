@@ -14,7 +14,7 @@ jobs:
       - name: Setup dotnet
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: "5.x.x"
+          dotnet-version: "6.x.x"
       - run: npm i -g pnpm
       - run: cd src/Hosted && pnpm i
       - run: dotnet build SiteFi.sln
