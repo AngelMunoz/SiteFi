@@ -46,9 +46,9 @@
 
   <ItemGroup>
     <PackageReference Include="Markdig" Version="0.26.0" />
-    <PackageReference Include="WebSharper" Version="5.0.0.120" />
-    <PackageReference Include="WebSharper.FSharp" Version="5.0.0.120" />
-    <PackageReference Include="WebSharper.UI" Version="5.0.0.120" />
+    <PackageReference Include="WebSharper" Version="6.0.0.228" />
+    <PackageReference Include="WebSharper.FSharp" Version="6.0.0.228" />
+    <PackageReference Include="WebSharper.UI" Version="6.0.0.228" />
     <PackageReference Include="YamlDotNet" Version="8.0.0" />
   </ItemGroup>
 
