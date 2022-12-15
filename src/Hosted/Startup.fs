@@ -15,26 +15,29 @@ open Website
 type Startup() =
 
     member this.ConfigureServices(services: IServiceCollection) =
-        Site.articles := Site.ReadArticles()
+        Site.articles.Value <- Site.ReadArticles()
         //services.Configure<KestrelServerOptions>(fun (options:KestrelServerOptions) ->
         //    options.AllowSynchronousIO <- true
         //)
         //|> ignore
 
-        //services.Configure<IISServerOptions>(fun (options:IISServerOptions) -> 
+        //services.Configure<IISServerOptions>(fun (options:IISServerOptions) ->
         //    options.AllowSynchronousIO <- true
         //)
         //|> ignore
 
-        services.AddSitelet(Site.Main Site.config Site.articles)
+        services
+            .AddSitelet(Site.Main Site.config Site.articles)
             .AddAuthentication("WebSharper")
-            .AddCookie("WebSharper", fun options -> ())
+            .AddCookie("WebSharper", (fun options -> ()))
         |> ignore
 
     member this.Configure(app: IApplicationBuilder, env: IWebHostEnvironment) =
-        if env.IsDevelopment() then app.UseDeveloperExceptionPage() |> ignore
+        if env.IsDevelopment() then
+            app.UseDeveloperExceptionPage() |> ignore
 
-        app.UseAuthentication()
+        app
+            .UseAuthentication()
             .UseStaticFiles()
             .UseWebSharper()
             .Run(fun context ->

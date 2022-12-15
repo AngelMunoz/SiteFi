@@ -69,7 +69,7 @@ module Yaml =
         let m = delimRE.Match(source, searchFrom)
 
         if m.Success then
-            source.[searchFrom..m.Index - 1], source.[m.Index + m.Length..]
+            source.[searchFrom .. m.Index - 1], source.[m.Index + m.Length ..]
         else
             "", source
 
@@ -132,14 +132,11 @@ module Helpers =
         let I s = Int32.Parse s
         let filename = Path.GetFileName(fullpath)
 
-        let filenameWithoutExt =
-            Path.GetFileNameWithoutExtension(fullpath)
+        let filenameWithoutExt = Path.GetFileNameWithoutExtension(fullpath)
 
-        let r =
-            new Regex("^([0-9]+)-([0-9]+)-([0-9]+)-(.+)\.(md)")
+        let r = new Regex("^([0-9]+)-([0-9]+)-([0-9]+)-(.+)\.(md)")
 
-        let r2 =
-            new Regex("^([1-2][0-9][0-9][0-9])([0-1][0-9])([0-3][0-9])-(.+)\.(md)")
+        let r2 = new Regex("^([1-2][0-9][0-9][0-9])([0-1][0-9])([0-3][0-9])-(.+)\.(md)")
 
         if r.IsMatch(filename) then
             let a = r.Match(filename)
@@ -218,8 +215,7 @@ module Site =
                 if String.IsNullOrEmpty s then
                     None
                 else
-                    let parts =
-                        s.Split([| "->" |], StringSplitOptions.None)
+                    let parts = s.Split([| "->" |], StringSplitOptions.None)
 
                     if Array.length parts <> 2 then
                         eprintfn
@@ -235,15 +231,12 @@ module Site =
             |> Set.toList
             |> Map.ofList
 
-        let config =
-            Path.Combine(__SOURCE_DIRECTORY__, @"../Hosted/config.yml")
+        let config = Path.Combine(__SOURCE_DIRECTORY__, @"../Hosted/config.yml")
 
         if File.Exists config then
-            let config =
-                Yaml.OfYaml<RawConfig>(File.ReadAllText config)
+            let config = Yaml.OfYaml<RawConfig>(File.ReadAllText config)
 
-            let languages =
-                KEY_VALUE_LIST "languages" config.languages
+            let languages = KEY_VALUE_LIST "languages" config.languages
 
             let users = KEY_VALUE_LIST "users" config.users
 
@@ -266,8 +259,7 @@ module Site =
               Users = Map.empty }
 
     let ReadArticles () : Articles =
-        let root =
-            Path.Combine(__SOURCE_DIRECTORY__, @"../Hosted/posts")
+        let root = Path.Combine(__SOURCE_DIRECTORY__, @"../Hosted/posts")
 
         let ReadFolder user store =
             let folder = Path.Combine(root, user)
@@ -288,8 +280,7 @@ module Site =
                         let title = Helpers.NULL_TO_EMPTY article.title
                         let subtitle = Helpers.NULL_TO_EMPTY article.subtitle
 
-                        let ``abstract`` =
-                            Helpers.NULL_TO_EMPTY article.``abstract``
+                        let ``abstract`` = Helpers.NULL_TO_EMPTY article.``abstract``
 
                         let url = Urls.POST_URL(user, fname)
                         eprintfn "DEBUG-URL: %s" url
@@ -336,7 +327,7 @@ module Site =
 
         Directory.EnumerateDirectories(root)
         // Read user articles
-        |> Seq.fold (fun store folder -> ReadFolder(Path.GetFileName(folder)) store) Map.empty
+        |> Seq.fold (fun store folder -> ReadFolder (Path.GetFileName(folder)) store) Map.empty
         // Read main articles
         |> ReadFolder ""
 
@@ -538,9 +529,7 @@ module Site =
             .Doc()
 
     let PLAIN html =
-        div [ Attr.Create "ws-preserve" "" ] [
-            Doc.Verbatim html
-        ]
+        div [ Attr.Create "ws-preserve" "" ] [ Doc.Verbatim html ]
 
     let ArticlePage (config: Config) articles (article: Article) =
         // Zero out if article has the master language
@@ -588,11 +577,7 @@ module Site =
 
                   MainTemplate
                       .ArticleCard()
-                      .Author(
-                          a [ attr.href <| Urls.USER_URL user ] [
-                              text displayName
-                          ]
-                      )
+                      .Author(a [ attr.href <| Urls.USER_URL user ] [ text displayName ])
                       .Title(article.Title)
                       .Abstract(article.Abstract)
                       .Url(article.Url)
@@ -637,7 +622,7 @@ module Site =
                 .Doc()
             |> Page langopt config.Value None false articles.Value
 
-        Application.MultiPage (fun (ctx: Context<_>) ->
+        Application.MultiPage(fun (ctx: Context<_>) ->
             function
             | Home langopt ->
                 HOME langopt
@@ -667,8 +652,7 @@ module Site =
                     Headers = [ Http.Header.Custom "content-type" "application/atom+xml" ],
                     WriteBody =
                         fun stream ->
-                            let ns =
-                                XNamespace.Get "http://www.w3.org/2005/Atom"
+                            let ns = XNamespace.Get "http://www.w3.org/2005/Atom"
 
                             let articles =
                                 articles.Value
@@ -679,25 +663,25 @@ module Site =
                                 X
                                     (ns + "feed")
                                     []
-                                    [ X(ns + "title") [] [ TEXT config.Value.Title ]
-                                      X(ns + "subtitle") [] [ TEXT config.Value.Description ]
-                                      X(ns + "link") [ "href" => config.Value.ServerUrl ] []
-                                      X(ns + "updated") [] [ Helpers.ATOM_DATE DateTime.UtcNow ]
+                                    [ X (ns + "title") [] [ TEXT config.Value.Title ]
+                                      X (ns + "subtitle") [] [ TEXT config.Value.Description ]
+                                      X (ns + "link") [ "href" => config.Value.ServerUrl ] []
+                                      X (ns + "updated") [] [ Helpers.ATOM_DATE DateTime.UtcNow ]
                                       for ((user, slug), article) in articles do
                                           X
                                               (ns + "entry")
                                               []
-                                              [ X(ns + "title") [] [ TEXT article.Title ]
+                                              [ X (ns + "title") [] [ TEXT article.Title ]
                                                 X
                                                     (ns + "link")
                                                     [ "href"
                                                       => config.Value.ServerUrl + Urls.POST_URL(user, slug) ]
                                                     []
-                                                X(ns + "id") [] [ TEXT(user + slug) ]
+                                                X (ns + "id") [] [ TEXT(user + slug) ]
                                                 for category in article.Categories do
-                                                    X(ns + "category") [] [ TEXT category ]
-                                                X(ns + "summary") [] [ TEXT article.Abstract ]
-                                                X(ns + "updated") [] [ TEXT <| Helpers.ATOM_DATE article.Date ]
+                                                    X (ns + "category") [] [ TEXT category ]
+                                                X (ns + "summary") [] [ TEXT article.Abstract ]
+                                                X (ns + "updated") [] [ TEXT <| Helpers.ATOM_DATE article.Date ]
                                                 X
                                                     (ns + "content")
                                                     [ XAttribute(XName.Get "type", "html") ]
@@ -723,33 +707,33 @@ module Site =
                                     [ X
                                           (N "channel")
                                           []
-                                          [ X(N "title") [] [ TEXT config.Value.Title ]
-                                            X(N "description") [] [ TEXT config.Value.Description ]
-                                            X(N "link") [] [ TEXT config.Value.ServerUrl ]
-                                            X(N "lastBuildDate") [] [ Helpers.RSS_DATE DateTime.UtcNow ]
+                                          [ X (N "title") [] [ TEXT config.Value.Title ]
+                                            X (N "description") [] [ TEXT config.Value.Description ]
+                                            X (N "link") [] [ TEXT config.Value.ServerUrl ]
+                                            X (N "lastBuildDate") [] [ Helpers.RSS_DATE DateTime.UtcNow ]
                                             for ((user, slug), article) in articles do
                                                 X
                                                     (N "item")
                                                     []
-                                                    [ X(N "title") [] [ TEXT article.Title ]
+                                                    [ X (N "title") [] [ TEXT article.Title ]
                                                       X
                                                           (N "link")
                                                           []
                                                           [ TEXT
                                                             <| config.Value.ServerUrl + Urls.POST_URL(user, slug) ]
-                                                      X(N "guid") [ "isPermaLink" => "false" ] [ TEXT(user + slug) ]
+                                                      X (N "guid") [ "isPermaLink" => "false" ] [ TEXT(user + slug) ]
                                                       for category in article.Categories do
-                                                          X(N "category") [] [ TEXT category ]
-                                                      X(N "description") [] [ TEXT article.Abstract ]
-                                                      X(N "pubDate") [] [ TEXT <| Helpers.RSS_DATE article.Date ]
-                                                      X(N "content") [] [ TEXT article.Content ] ] ] ]
+                                                          X (N "category") [] [ TEXT category ]
+                                                      X (N "description") [] [ TEXT article.Abstract ]
+                                                      X (N "pubDate") [] [ TEXT <| Helpers.RSS_DATE article.Date ]
+                                                      X (N "content") [] [ TEXT article.Content ] ] ] ]
 
                             doc.Save(stream)
                 )
             | Refresh ->
                 // Reload the article cache and the master configs
-                articles := ReadArticles()
-                config := ReadConfig()
+                articles.Value <- ReadArticles()
+                config.Value <- ReadConfig()
                 Content.Text "Articles/configs reloaded.")
 
 open System.IO
@@ -808,7 +792,8 @@ type Website() =
                               (fun (_, (art: Site.Article)) ->
                                   language = Site.URL_LANG config.Value art.Language
                                   && List.contains category art.Categories)
-                              articles then
+                              articles
+                      then
                           Category(category, language)
               // Generate the RSS/Atom feeds
               RSSFeed
