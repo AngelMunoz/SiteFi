@@ -17,7 +17,9 @@ Oh Jesus... not this again... please don't tell me that you just typed:
 
 What!? that _a friend of yours was insisting that you use F# for your next project, and you just wanted to get it over with?_
 Let me guess, _he didn't even tell you that there are better*™* web frameworks for F#..._ like [Giraffe], [Saturn], and [Falco] among others?
-_You just followed the instructions at the microsoft documentation?_ No worries that happens more often than you think.
+_You just followed the instructions at the microsoft documentation?_
+
+No worries that happens more often than you think.
 
 ---
 
@@ -66,33 +68,51 @@ It has the standard main function with a web application builder, an example to 
 
 Buf you will notice straight away there are some weird things around, like the `Func<string>(fun () -> "Hello World!")` part why not just pass a function directly there? also what's the `|> ignore` thing doing? why are we ignoring that though?
 
-It turns out that in C# the compiler and tooling is build in a way that `Func<T>`, `Action<T>`, and friends can be written without specifying it there, F# functions (`FSharpFunc<T>`) on the other hand are not a 1-1 equivalent for those types thus there has to be a way to translate the F# idiom to the C# idiom.
-
-F# also has this feature that doesn't let you simply discard return values from an expression, you have to explicitly ignore them. Take into account the following JavaScript code
-
-```js
-function sayHello(msg) {
-  console.log("Hello World!", msg);
-  return "Hello World!" + msg;
-}
-
-// here we use it to print out to the console
-sayHello("F#");
-// here we use it to assing the value to a const
-const allTogether = sayHello("F#");
-```
-
-You've seen code like this in your language of choice before and no one cares too much because the code works as they intend it to work when they consume it.
-
-F# will tell you with a warning that there's a function that returns a value that you're not using this in the F# world is very helpful as it helps you to define what do you actually want to do with the function and the data that comes in.
+It turns out that in C# the compiler and tooling is built in a way that `Func<T>`, `Action<T>`, and friends can be written transparently (e.g. `(string name) => Results.Ok(name)`) there, F# functions (`FSharpFunc<T>`, `fun (name: string) -> Results.Ok(name)`) on the other hand while syntactically similar they are not a 1-1 replacement for those types in the dotnet runtime and there has to be a translation the F# idiom to the C# idiom.
 
 In our sample above MapGet is part of a route builder meaning that it always returns an instance of `RouteHandlerBuilder` in C# there's no warning for discarded values so it doesn't show anything, in F# to avoid that warning we explicitly ignore the value.
 
+> **_Note_**: In the case of the `|> ignore<'T>` (you don't see the `'T` because the compiler provides type inference) this is a feature that doesn't let you simply discard return > values from an expression, you have to explicitly ignore them or live with a warning. Take into account the following JavaScript code
+>
+> ```js
+> function addProp(obj, propName, value) {
+>   // The previous dev who worked here
+>   // Mutated the object, it didn't creae a new one
+>   // Not even god remembers why, he left the company 2 years ago
+>   obj[propName] = value;
+>   return obj;
+> }
+> // create a person with a name
+> const person = { name: "Frank" };
+>
+> // add the age property to the person use the same reference
+> addProp(person, "age", 30);
+>
+> // someone else decided to apply object destructuring
+> const { name, age, job } = addProp(person, "job", "Developer");
+> ```
+>
+> Now that the original dev is not around, we're not sure what was the true intent of the function was it to mutate the object only? was it intended to create copies and use the resulting value? no idea but If you're a relatively seasoned JS dev, you know mutating an object within a function may lead to unexpected code paths yet > the editor/tooling won't complain about it, it is usually you or a co-worker that finds out because they got a jira ticket to fix something out.
+>
+> For F# this means that it will produce a warning in the build logs as well as the editor that there's a function call that returns a value that is not being used (the first function call in the previous example) it won't complain about the second function call because you're actually using the function's return value and since most objects are immutable in F# that kind of code that mutates an instance and returns it probably wouldn't compile unless it is a classic dotnet object.
+
 **Ok, but is that actually bad?**
 
-Nope, it is not bad it is just annoying, as you have to type more characters and it introduces more noise to the code, but it is not inherently bad.
+You might be wondering if those annoyances might limit how your F# code behaves or what can be done with it and the reality is that no that's not really a big issue in my opinion it is not bad it is just annoying, as you have to type more characters and it introduces more noise to the code, you certainly notice that C# gets more love but that's not a big deal, you can still write your code and it will work just fine.
 
-Before we surrender to the F# idiomatic gods, let's try to come up with code structure that hopefully will keep things bearable.
+At this point you might start wondering if there's an easier with less friction path to work with F# and asp.net, the answer is: **_Sure!_** there are actually other options you can check out like:
+
+- [Falco] - A functional web framework for F# that sits on top of aspnet.
+- [Giraffe] - A functional web framework for F# that sits on top of aspnet.
+- [Saturn] - A functional web take on MVC built on top of giraffe
+
+both Falco and Giraffe are very similar but they offer different tools to work with they are not a 1-1 equivalent at the userland code level they are both worth looking at for you to evaluate.
+
+Saturn is built on top of the giraffe abstractions for routes and function composition with a few helpers that provide a MVC-like smooth yet functional abstraction, it is more opinionated but also worth looking at.
+
+---
+
+Before we surrender to the F# idiomatic gods, I find myself in the position to tell you that you can still use the minimal api features and build your web application and that you can actually make it simpler to integrate things like swagger and open api documentation which is currently something the F# tailored solutions may not be as simple to add.
 
 ```fsharp
 // Let's add the required namespaces
@@ -183,13 +203,19 @@ let main args =
     0 // Exit code
 ```
 
-Well now that we have something in place it isn't that bad is it? It could be better or a little bit more streamlined but this is just enough to keep that annoying friend of ours that keeps telling us to use F# away from our backs for a while.
+If we follow the pattern of keeping our endpoints in a module and registering them at the main function we can keep our code organized with minimal effort.
 
-### But... How do we scale?
+**_But... How do we scale?_**
 
-One thing I've heard before if you come from languages like Javascript/Typescript where express apps or Python's Flask apps blow up to hell due to the "micro-framework" focus (i.e. using just functions and routes) is that just function handlers are not good to scale the app size, while I disagree with that statement I can see where it comes from, in the case of F# as you saw above, you could keep adding modules with handlers, registering them at the main function and you should be good to go, minimal API functions can work nicely with dependency injection and other cool features built into aspnet which help with application's growth.
+One thing I've heard before if you come from languages like Javascript/Typescript where express apps or Python's Flask apps blow up to hell due to the "micro-framework" focus of using just functions and routes
 
-But if you're still not convinced, we can also add _controller_ endpoints which might be more reminiscent to controllers in frameworks like ruby on rails, laravel, django, etc which are often associated to "bigger" applications.
+Some believe that by using only function handlers you set up yourself for spaghetti code with an untelligible mess.
+
+This in my opinion is more of an architectural level problem rather than one at the application/framework level, you can still use the same patterns you use in other languages to keep your code organized such as dependency injection. In asp.net DI is built into the framework so you can use it out of the box. In the example above we actually injected a logger into our handler and the only thing we had to do was to add the correct signature plus the type annotation in the route registration.
+
+If we add more services to our application, we can rely in the function parameters rather than closures to access services that may live in a module.
+
+That being said, if you're still not convinced, we can also add _controller_ endpoints which might be more reminiscent to controllers in frameworks like ruby on rails, laravel, django, etc which are often associated to "bigger" applications.
 
 To do that we'll have to make some changes to our single file
 
@@ -212,17 +238,19 @@ open Microsoft.AspNetCore.Http
 // to enable aspnets conventions for controllers
 [<ApiController>]
 [<Route("[controller]")>]
-// we can use dependency injection directly
+// DI in this case is applied at the controller's constructor level
+// but... at the same time we're using a closure-like access to the handler's dependencies c:
+// which was not present in the minimal example.
 type UploadsController(logger: ILogger<UploadsController>) =
     inherit ControllerBase()
 
     // This attribute is used to specify the route otherwise it is taken from the method name
-    [<HttpPost("user-avatar");
+    [<HttpPost("user-avatar")>]
       // these are similar to the minimal api builder methods, they are used to specify
       // the content type of the request and response
-      Consumes("multipart/form-data");
-      ProducesResponseType(StatusCodes.Status204NoContent);
-      ProducesResponseType(StatusCodes.Status400BadRequest)>]
+    [<Consumes("multipart/form-data")>]
+    [<ProducesResponseType(StatusCodes.Status204NoContent)>]
+    [<ProducesResponseType(StatusCodes.Status400BadRequest)>]
     member ctrl.UserAvatar(avatar: IFormFile) : Task<IActionResult> =
         task {
             logger.LogInformation("UserAvatar Got Called")
@@ -243,11 +271,13 @@ type UploadsController(logger: ILogger<UploadsController>) =
                     return ctrl.BadRequest("The file must be an image")
         }
 
+// Guess what!?
+// We don't need to get rid of our minimal handlers!
 [<RequireQualifiedAccess>]
 module MinimalHandlers = (* ... *)
 
-// namespaces cannot contain values (e.g. let mything = ) so we have to use a module wrapper
-// to contain our main function
+// namespaces cannot contain values (let bindings)
+// we have to use a module wrapper to contain our main function
 module Program =
 
     [<EntryPoint>]
@@ -258,11 +288,13 @@ module Program =
 
         let app = builder.Build()
 
+        // as an example, we can keep our minimal api handlers
+        // plus the controller route handlers!
         MinimalHandlers.register app
         // ProductHandlers.register app
         // ProductHandlers.register app
 
-        // ensure that the controller routing middleware is added
+        // Ensure that the controller routing middleware is added
         app.MapControllers() |> ignore
 
         app.Run()
@@ -270,17 +302,25 @@ module Program =
         0 // Exit code
 ```
 
-With this, we now have Controllers that are convention based, and minimal apis that are a little bit more explicit both are valid ways to build web applications in F# and aspnet and this also includes "bigger" applications, you can mix and match them as you see fit.
+With this, we also have convention based controllers that build in years of battle tested asp.net framework patterns, and minimal apis which are somewhat a _newer_ and more lightweight concept that internally builds on top of the same conventions for regular asp.net apps.
 
-In my personal and biased opinion, controllers are a little bit more verbose than minimal apis, but they are also more familiar to people coming from other languages, so it is a matter of preference and what you want to do with your application.
+In my personal and biased opinion, controllers are a little bit more verbose and feel heavier than minimal apis, so I tend to favor the later but they are also more familiar to people coming from other languages
+
+In the end it is a matter of preference and how comfortable are you with the code you're writing.
 
 ### So... what's next?
 
-Getting started with your project of course! you can start adding more routes, or even adding another library like the ones mentioned at the beginning of this post or... hear me out:
+Getting started with your project of course! you can start adding more routes, or switching to the F# frameworks we've already mentioned or... hear me out...
 
-- Keep using standard aspnet features!
+- Just Keep using standard asp.net!
 
-While you're learning this new F# thing with web servers you'll find that there's a ton of C# tailored documentation for things like Web API Controllers so I'd suggest that you can keep learning it with that until you feel comfortable enough to try out the other frameworks and F# tailored libraries. In the end they all build on top of aspnet (except maybe for a few select choices) so what you learn here will also be useful there.
+If you got to this point and felt comfortable using plain asp.net then there's nothing wrong with that, perhaps even better as you may be able to provide feedback to the asp.net team on how to improve the experience for F# developers.
+
+### Closing Thoughts
+
+A last word of advice, while you're learning this new F# thing with web servers you'll find that there's a ton of C# tailored documentation for things like Controllers and minimal APIs while the F# content in this regard is scarce. The main reason this happens is that most of the F# comunity doesn't want to deal with the friction of using C# idioms in F# code so they build their own solutions. Thus you're likely going to find more information by switching to an F# tailored solution.
+
+I'd suggest that before you fully commit to something, make a couple of toy projects to test the waters and follow your gut, which one felt better and go from there! eventually you'll end up with something that you like and that works for you with the added knowledge of asp.net under the hood.
 
 This is also not a definitive guide and I hope that you don't get discouraged from trying F# if for some reason you stumble upon the **_Official_** documentation and you end up doing something that may or may not be what your friends/twitter/reddit/discord folks were telling you about.
 
@@ -290,4 +330,3 @@ You know where to find me!
 
 - [@angelmunoz@misskey.cloud](https://misskey.cloud/@angelmunoz) - Fediverse presence (like mastodon).
 - [@angel_d_munoz@threads.net](https://threads.net/@angel_d_munoz) - We're getting started here :P .
-- [@angel_d_munoz](https://twitter.com/angel_d_munoz) - We'll take the beatings until the ship sinks or if we get bored.
