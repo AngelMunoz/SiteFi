@@ -51,7 +51,7 @@ Over the past month I went down to try two of the most prominent libraries that 
 
 Last time we saw them was at the frontend review I wrote a couple of years ago
 
-{% embed https://dev.to/tunaxor/exploring-the-f-frontend-landscape-13aa %}
+> ## [Exploring the F# Frontend Landscape](https://dev.to/tunaxor/exploring-the-f-frontend-landscape-13aa)
 
 But it is also nothing too extreme.
 
