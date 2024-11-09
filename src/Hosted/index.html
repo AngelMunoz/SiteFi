@@ -13,11 +13,12 @@
       content="fsharp dotnet javascript typescript frontend software development desktop backend server"
     />
     <meta ws-replace="meta" />
-    <meta name="fediverse:creator" content="@angelmunoz@hachyderm.io">
+    <meta name="fediverse:creator" content="@angelmunoz@hachyderm.io" />
     <link href="/manifest.webmanifest" rel="manifest" />
     <link rel="stylesheet" href="/css/all${ReleaseMin}.css" />
     <script ws-replace="Head"></script>
   </head>
+
   <body>
     <header class="navbar ${NavbarOverlay} is-dark">
       <div class="container">
@@ -125,7 +126,9 @@
                   <div class="card-content">
                     <div class="media">
                       <div class="media-content">
-                        <a href="${Url}"><p class="title is-4">${Title}</p></a>
+                        <a href="${Url}">
+                          <p class="title is-4">${Title}</p>
+                        </a>
                         <p class="subtitle is-6" ws-hole="Author"></p>
                       </div>
                     </div>
@@ -241,16 +244,39 @@
     </div>
     <footer class="footer has-background-dark has-text-light mt-4">
       <div class="content has-text-centered">
-        <p>
-          Powered by
-          <a href="https://github.com/granicz/SiteFi">
-            <strong>SiteFi</strong>
+        <style>
+          bsky-widget {
+            min-height: 408px;
+            width: 350px;
+          }
+        </style>
+        <div
+          style="
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+          "
+        >
+          <a
+            class="has-text-light is-size-3"
+            rel="me"
+            href="https://hachyderm.io/@angelmunoz"
+          >
+            Fediverse
           </a>
-        </p>
-        <div style="display: flex; justify-content: space-evenly">
-          <a rel="me" href="https://hachyderm.io/@angelmunoz">Fediverse</a>
-          <a rel="me" href="https://www.threads.net/@angel_d_munoz">Threads.net</a>
-          <a rel="me" href="https://bsky.app/profile/tunaxor.me">Bluesky</a>
+          <bsky-widget
+            class="has-text-dark"
+            ws-preserve
+            data-handle="tunaxor.me"
+          >
+          </bsky-widget>
+          <a
+            class="has-text-light is-size-3"
+            rel="me"
+            href="https://www.threads.net/@angel_d_munoz"
+          >
+            Threads.net
+          </a>
         </div>
       </div>
     </footer>
@@ -285,5 +311,9 @@
         "floating-chat.donateButton.text-color": "#fff",
       });
     </script>
+    <script
+      src="https://unpkg.com/bsky-widget@~0.0/dist/index.js"
+      type="module"
+    ></script>
   </body>
 </html>
