@@ -1,4 +1,4 @@
-﻿module Client
+module Client
 
 open WebSharper
 open WebSharper.JavaScript
@@ -8,15 +8,20 @@ open WebSharper.UI.Notation
 module Highlight =
   open WebSharper.HighlightJS
 
-  [<Require(typeof<Resources.Languages.Fsharp>)>]
-  [<Require(typeof<Resources.Styles.Vs>)>]
+  let private RegisterLanguages() =
+    Hljs.RegisterLanguage("fsharp", Language.Fsharp)
+    Hljs.RegisterLanguage("javascript", Language.Javascript)
+    Hljs.RegisterLanguage("typescript", Language.Typescript)
+    Hljs.RegisterLanguage("css", Language.Css)
+    Hljs.RegisterLanguage("html", Language.Xml)
+    Hljs.RegisterLanguage("xml", Language.Xml)
+    Hljs.RegisterLanguage("json", Language.Json)
+    Hljs.RegisterLanguage("sql", Language.Sql)
+
   let Run() =
-    JS.Document
-      .QuerySelectorAll("code[class^=language-]")
-      .ForEach(
-        (fun (node, _, _, _) -> Hljs.HighlightElement(node)),
-        JS.Undefined
-      )
+    JS.ImportFile "highlight.js/styles/atom-one-light.min.css"
+    RegisterLanguages()
+    Hljs.HighlightAll()
 
 module Bulma =
 

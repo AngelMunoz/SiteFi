@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <OutputDirectory>../../build</OutputDirectory>
   </PropertyGroup>
 
@@ -31,13 +31,13 @@
   <Target Name="RenameAtom" AfterTargets="Build" Outputs="$(OutputDirectory)/feed.atom">
     <Message Text="Renaming feed.atom.html to feed.atom" />  
     <Error Condition="!Exists('$(OutputDirectory)/feed.atom.html') And !Exists('$(OutputDirectory)/feed.atom')" Text="Can't find feed.atom.html"/>
-    <Move Condition="Exists('$(OutputDirectory)/feed.atom.html')" SourceFiles="$(OutputDirectory)/feed.atom.html" DestinationFiles="$(OutputDirectory)/feed.atom" />
+    <Copy Condition="Exists('$(OutputDirectory)/feed.atom.html')" SourceFiles="$(OutputDirectory)/feed.atom.html" DestinationFiles="$(OutputDirectory)/feed.atom" />
   </Target>
 
   <Target Name="RenameRSS" AfterTargets="Build" Outputs="$(OutputDirectory)/feed.rss">
     <Message Text="Renaming feed.rss.html to feed.rss" />
     <Error Condition="!Exists('$(OutputDirectory)/feed.rss.html') And !Exists('$(OutputDirectory)/feed.rss')" Text="Can't find feed.rss.html"/>
-    <Move Condition="Exists('$(OutputDirectory)/feed.rss.html')" SourceFiles="$(OutputDirectory)/feed.rss.html" DestinationFiles="$(OutputDirectory)/feed.rss" />
+    <Copy Condition="Exists('$(OutputDirectory)/feed.rss.html')" SourceFiles="$(OutputDirectory)/feed.rss.html" DestinationFiles="$(OutputDirectory)/feed.rss" />
   </Target>
   
   <Target Name="CleanGeneratedFiles" AfterTargets="Clean">
@@ -46,9 +46,9 @@
 
   <ItemGroup>
     <PackageReference Include="Markdig" Version="0.26.0" />
-    <PackageReference Include="WebSharper" Version="6.0.0.228" />
-    <PackageReference Include="WebSharper.FSharp" Version="6.0.0.228" />
-    <PackageReference Include="WebSharper.UI" Version="6.0.0.228" />
+    <PackageReference Include="WebSharper" Version="9.0.0.547" />
+    <PackageReference Include="WebSharper.FSharp" Version="9.0.0.547" />
+    <PackageReference Include="WebSharper.UI" Version="9.0.0.547" />
     <PackageReference Include="YamlDotNet" Version="8.0.0" />
   </ItemGroup>
 

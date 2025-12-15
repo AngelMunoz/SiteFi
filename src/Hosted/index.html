@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="${Language}">
   <head>
     <meta charset="utf-8" />
@@ -16,6 +16,7 @@
     <meta name="fediverse:creator" content="@angelmunoz@hachyderm.io" />
     <link href="/manifest.webmanifest" rel="manifest" />
     <link rel="stylesheet" href="/css/all${ReleaseMin}.css" />
+    <link rel="stylesheet" href="/js/Client.bundled${ReleaseMin}.css" />
     <script ws-replace="Head"></script>
   </head>
 
@@ -280,7 +281,7 @@
         </div>
       </div>
     </footer>
-    <script src="/js/Client${ReleaseMin}.js"></script>
+    <script src="/js/Client.bundled${ReleaseMin}.js"></script>
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
       import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-analytics.js";

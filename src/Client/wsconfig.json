@@ -1,4 +1,4 @@
-﻿{
+{
   "$schema": "https://websharper.com/wsconfig.schema.json",
   "project": "spa",
   "outputDir": "../Hosted/js"

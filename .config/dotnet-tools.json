@@ -3,14 +3,14 @@
   "isRoot": true,
   "tools": {
     "fantomas": {
-      "version": "6.3.16",
+      "version": "7.0.5",
       "commands": [
         "fantomas"
       ],
       "rollForward": false
     },
     "dotnet-serve": {
-      "version": "1.10.175",
+      "version": "1.10.193",
       "commands": [
         "dotnet-serve"
       ],

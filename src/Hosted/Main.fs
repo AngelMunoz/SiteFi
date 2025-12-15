@@ -669,6 +669,8 @@ module Site =
                   X (ns + "subtitle") [] [ TEXT config.Value.Description ]
                   X (ns + "link") [ "href" => config.Value.ServerUrl ] []
                   X (ns + "updated") [] [ Helpers.ATOM_DATE DateTime.UtcNow ]
+                  X (ns + "id") [] [ TEXT config.Value.ServerUrl ]
+                  X (ns + "author") [] [ X (ns + "name") [] [ TEXT config.Value.MasterUserDisplayName ] ]
                   for ((user, slug), article) in articles do
                     X (ns + "entry") [] [
                       X (ns + "title") [] [ TEXT article.Title ]
@@ -676,7 +678,7 @@ module Site =
                         "href"
                         => config.Value.ServerUrl + Urls.POST_URL(user, slug)
                       ] []
-                      X (ns + "id") [] [ TEXT(user + slug) ]
+                      X (ns + "id") [] [ TEXT(config.Value.ServerUrl + Urls.POST_URL(user, slug)) ] // Use permalink as id for entry
                       for category in article.Categories do
                         X (ns + "category") [] [ TEXT category ]
                       X (ns + "summary") [] [ TEXT article.Abstract ]
@@ -697,6 +699,7 @@ module Site =
           Headers = [ Http.Header.Custom "content-type" "application/rss+xml" ],
           WriteBody =
             fun stream ->
+              let contentNs = XNamespace.Get "http://purl.org/rss/1.0/modules/content/"
               let articles =
                 articles.Value
                 |> Map.toList
@@ -704,7 +707,10 @@ module Site =
                   article.Date.Ticks)
 
               let doc =
-                X (N "rss") [ "version" => "2.0" ] [
+                X (N "rss") [
+                    "version" => "2.0"
+                    XAttribute(XNamespace.Xmlns + "content", contentNs.NamespaceName)
+                  ] [
                   X (N "channel") [] [
                     X (N "title") [] [ TEXT config.Value.Title ]
                     X (N "description") [] [ TEXT config.Value.Description ]
@@ -728,7 +734,7 @@ module Site =
                         X (N "pubDate") [] [
                           TEXT <| Helpers.RSS_DATE article.Date
                         ]
-                        X (N "content") [] [ TEXT article.Content ]
+                        X (contentNs + "encoded") [] [ TEXT article.Content ]
                       ]
                   ]
                 ]

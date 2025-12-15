@@ -10,14 +10,14 @@ jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
       - name: Setup dotnet
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: "6.x.x"
+          dotnet-version: "10.0.x"
       - run: npm i -g pnpm
       - run: cd src/Hosted && pnpm i
-      - run: dotnet build SiteFi.sln
+      - run: dotnet clean && dotnet build SiteFi.sln
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"

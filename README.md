@@ -12,13 +12,13 @@ SiteFi is a simple and highly configurable static site generator for F#. It uses
  * Tag your articles with categories, and get listing pages for each
  * Have multiple authors? No problem! Each get a separate folder for articles.
  * RSS 2.0 and Atom 1.0 feeds
- * Syntax highlighting for F# code blocks
+ * Syntax highlighting for F# code blocks (using Highlight.js)
  * Develop dynamic articles in F#, with charts, visualizations, etc.
  * Streamlined workflow for template changes (style, layout, etc.) - see effects immediately, and only rebuild when you are done
 
 # 1. Configuring your blog
 
-The main configuration file is located in `src\Hosted\config.yml`. Use this file to configure various site-wide aspects such as the URL you are deploying your blog to, your name, the default language for your articles, and RSS/Atom feed info.
+The main configuration file is located in `src/Hosted/config.yml`. Use this file to configure various site-wide aspects such as the URL you are deploying your blog to, your name, the default language for your articles, and RSS/Atom feed info.
 
 ```text
 serverUrl: http://mywebsite.com
@@ -46,138 +46,110 @@ users: "extra1->My Friend's Name"
 
 ## Dependencies
 
-- [Node](https://nodejs.org/en/)
-- [Dotnet SDK 3.1](https://dotnet.microsoft.com/download)
+- [Node.js](https://nodejs.org/en/) and [pnpm](https://pnpm.io/)
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) (or newer)
 
 ## Building the repository
 
-1) Run `.\install.ps` - do this the first time you start working with this repository. This script installs the required JS/CSS resources (only Bulma at the moment) and a convenient HTML server, `dotnet-serve` to serve the output.
+1.  **Install Dependencies**: Run `pnpm install` in the `src/Hosted` directory to install JavaScript dependencies (including Highlight.js and esbuild).
+    ```bash
+    cd src/Hosted
+    pnpm install
+    cd ../..
+    ```
 
-2) In the root folder, run `"dotnet build"` - this builds the entire solution, and among others generates your HTML files in the top-level `build` folder, ready to deploy elsewhere. That folder will look something like the following, ready to deploy to your web server:
+2.  **Build**: In the root folder, run `dotnet build`. This command:
+    *   Builds the `Client` project (F# -> JS).
+    *   Bundles the client-side code and dependencies using `esbuild`.
+    *   Builds the `Hosted` project.
+    *   Builds the `Website` project, which generates the static HTML files in the `build` directory.
 
-   ![](docs/vscode02.png)
+    ```bash
+    dotnet build SiteFi.sln
+    ```
 
-   Alternatively, you can also "run" your site without static file generation by running the `src\Hosted` project with `"dotnet run -p src\Hosted\Hosted.fsproj"`. This starts your website on `http://localhost:5000`, by default.
+    Alternatively, you can use the `build.sh` script (on Linux/macOS) or `build.ps1` (on Windows) which handles dependency installation and building for you.
 
-Alternatively, instead of running Step 1 and Step 2 separately, you can invoke `build.cmd` or `build.sh` to install dependencies and build the solution
+    ```bash
+    ./build.sh
+    ```
 
-3) (Optional) Run `.\serve.cmd` to preview your generated HTML files - this invokes `dotnet-serve` on the `build` folder so you can view your blog articles in the browser (by default at `http://localhost:56001`). You can change the port, if needed in the script.
+## Previewing
 
+To preview the generated static site:
 
-## Cleaning your generated files
+1.  Run the `serve.sh` script (Linux/macOS) or `serve.cmd` (Windows). This uses `dotnet-serve` to host the contents of the `build` directory.
+    ```bash
+    ./serve.sh
+    ```
+    This will start a local server, usually at `http://localhost:4300`.
 
-You can clean your solution with `"dotnet clean"` from the root folder: this removes all generated artifacts, including the `build` folder.
+## Cleaning
+
+You can clean your solution with `dotnet clean` from the root folder. This removes generated artifacts, including the `build` folder.
 
 # 3. Writing your articles
 
-The markdown files for your articles are in `src\Hosted\posts`. Add your `.md` files to this folder with the naming convention `YYYY-MM-DD-YourArticleTitle.md` or `YYYYMMDD-YourArticleTitle.md`. Give at least the title in the YAML header, as follows:
+The markdown files for your articles are in `src/Hosted/posts`. Add your `.md` files to this folder with the naming convention `YYYY-MM-DD-YourArticleTitle.md` or `YYYYMMDD-YourArticleTitle.md`. Give at least the title in the YAML header, as follows:
 
-```
+```yaml
 ---
 title: A wonderful F# journey
 subtitle: The best path to getting my F# blog up and running
-...
 ---
 ```
-You can use the following properties:
+
+You can use the following properties in the YAML header:
 
 | Property      | What it is |
 |:------------- |:--------------|
 | `title`       | The title of the article. |
 | `subtitle`    | The subtitle of the article. |
 | `abstract`    | A brief description of the article. |
-| `url`         | *This is unused.* |
-| `content`     | The content of the article, usually very short, otherwise use the article body. |
 | `date`        | The date of the article, overriding the date given through the filename. |
 | `categories`  | The comma-separated list of categories/tags of the article. |
 | `language`    | The language code of the article. You can map these to language labels in `config.yml`.|
 
-Remember to rebuild `src\Website` after each change and/or new article to get the matching HTML output. Or alternatively, use/run the `src/Hosted` project to enable near-live edits - see below for more details.
+After adding or modifying an article, run `dotnet build SiteFi.sln` to regenerate the static site in the `build` folder.
 
 ## Multilingual articles
 
-As listed above, you can use the `language` property in your article header to mark the language for that article. You can use any key you prefer for this, such as `"en"`, `"eng"`, etc. The sum of all keys (case sensitive) in your articles makes up the language list used in your site. The master language can be configured in `config.yml` under `masterLanguage`, which specifies the default language key for articles that otherwise might be missing the `language` property.
-
-By default, if all articles use the same language, matching `masterLanguage`, no language selector is rendered. Otherwise, a language selector widget is built from the languages used in the articles by taking their language keys and mapping them to display names using the `languages` setting in `config.yml`.
+Use the `language` property in your article header to mark the language (e.g., `"en"`, `"es"`). Map these keys to display names in `config.yml` under the `languages` setting. The `masterLanguage` setting specifies the default language key.
 
 ## Multiple authors
 
-By default, the `src\Hosted\posts` folder contains the master user's articles. You can add articles by additional authors into subfolders, and you can configure their display names by setting `users` in `config.yml`.
+By default, the `src/Hosted/posts` folder contains the master user's articles. Additional authors can have their own subfolders within `posts`. Configure their display names using the `users` setting in `config.yml`.
 
-For instance, if you have three additional authors in your blog organization next to the master author, the posts folder might look like the following:
-
+Example structure:
 ```text
 posts
    |-- john
        2020-01-01-HappyNewYear.md
-   |-- fred
-       2020-02-11-WhyFSharpRocks.md
-   |-- bill
-       2020-01-04-UsingVisualStudioCode.md
    2020-01-15-WebSharperSPAs.md
 ```
 
-These users can then be configured in `config.yml` as:
-
+Config:
 ```yaml
-...
-masterUserDisplayName: Adam Smith
-users: "john->John Smith,fred->Fred Smith,bill->Bill Smith"
+users: "john->John Smith"
 ```
 
-# Solution structure
+# Solution Structure
 
-The repository provides a general blueprint to structure your static blog application, and without any changes is able to generate a static blog from a list of blog articles written in the markdown format.
+This repository contains three main projects:
 
-There are three projects in this repository that you can use to further develop the built-in sample blog to your needs:
+*   **`src/Client`**: A WebSharper F# project that compiles to JavaScript. It handles client-side interactivity, such as the drawer menu and syntax highlighting.
+    *   **Syntax Highlighting**: Uses [Highlight.js](https://highlightjs.org/) via `WebSharper.HighlightJS`.
+    *   **Styles**: Styles are managed via SCSS in `src/Hosted/scss` and compiled during the build. Highlight.js themes are imported dynamically.
 
- * `src\Client` - this contains client-side functionality (to be run as JavaScript code) that you intend to embed in all (or some) of the output HTML pages. `Client` is a WebSharper+F# project and uses WebSharper to generate transpiled JavaScript code. Currently, this project consists of a single `Main.fs` file that enables F# syntax highlighting for markdown code blocks, and hides/shows the responsive drawer menu in the generated pages on mobile devices.
+*   **`src/Hosted`**: An ASP.NET Core application that acts as the "host" for development and the source of truth for the static generation.
+    *   **Bundling**: Uses `esbuild` (via `pnpm` scripts) to bundle the WebSharper-generated JavaScript and third-party libraries (like Highlight.js) into a single optimized file (`Client.bundled.js`).
+    *   **Live Development**: You can run this project with `dotnet run --project src/Hosted/Hosted.fsproj` to see changes without full static regeneration (note: some changes might still require a rebuild).
 
- * `src\Hosted` - this is a WebSharper client-server and an ASP.NET Core application. You can run it to self-host your blog and work with template/style/layout changes much more effectively without having to recompile on each update. Simply deploy, make changes to `index.html` in the root of the project, and refresh your page in your browser. You can also author your blog articles and see them in their rendered form by triggering a runtime update URL (see below.)
-
- * `src\Website` - this is a dummy WebSharper offline sitelet project that uses the code from `src\Hosted` and generates HTML pages in the `\build` root folder. It also copies all related artifacts (CSS, JS, images, etc.) into this folder, making it self-contained and ready to deploy in GitHub Pages or any other HTML server.
-
-# Extending your blog website
-
-The default blog is represented in `\src\Hosted\Main.fs` as follows:
-
-```fsharp
-type EndPoint =
-    | [<EndPoint "GET /">] Home
-    | [<EndPoint "GET /blog">] Article of slug:string
-```
-
-If you need other pages, such as an About page or a set of documentation pages, you can add further shapes to this type and enhance `Site.Main` accordingly.
-
-# Making template changes
-
-I recommend you run the `src\Hosted` project if you intend to make template/layout/style changes. By default, the master template (`index.html`) is used in such a way that updates to this file are reflected runtime, i.e. without requiring recompilation (unless you change the bindings/placeholders, in which case you need to recompile and adapt your `Main.fs` accordingly), significantly speeding up your development workflow.
-
-You can run the hosted project as opposed to `src/Website` in Visual Studio by making it your default project and running it, and in Visual Studio Code (or in any terminal) by running (from the root folder):
-
-```
-dotnet run --project src\Hosted\Hosted.fsproj
-```
-
-By default, the hosted application is deployed to `localhost:5000`, note the different port here.
-
-When you change existing blog articles or add new ones, you need to reload their markdown files. I have added a sitelet endpoint to trigger this:
-
-```fsharp
-type EndPoint =
-    ...
-    | [<EndPoint "GET /refresh">] Refresh
-```
-
-You can simply go to `http://localhost:5000/refresh`, and reload your article to reflect any changes you made to it while the hosted blog has been running.
-
-Have fun writing your blog with SiteFi!
-
-# RSS and Atom feeds
-
-By default, an RSS and Atom feed is generated automatically for your blog, both in the statically generated site and the self-hosted one. The URLs are `/feed.rss` and `/feed.atom` in both cases. In the statically generated site under `build`, you might need to configure your web server to serve these files with the correct MIME types, see your web server configuration for more details.
+*   **`src/Website`**: A WebSharper Sitelet project responsible for **static site generation**.
+    *   **Output**: Generates the full HTML site in the `build` directory.
+    *   **Feeds**: Automatically generates `feed.rss` and `feed.atom`.
 
 # Appendix - Image credit
 
-* `src\Hosted\img\Banner.jpg` by Plush Design Studio on Unsplash - https://unsplash.com/photos/UHqfUTDmdC4
+* `src/Hosted/img/Banner.jpg` by Plush Design Studio on Unsplash - https://unsplash.com/photos/UHqfUTDmdC4
 

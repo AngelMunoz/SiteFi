@@ -10,7 +10,7 @@
 /src/Hosted/obj
 /src/Hosted/js
 /src/Hosted/css
-/src/Hosted/scripts
+/src/Hosted/[sS]cripts
 /src/Hosted/node_modules
 /build
 *.user
@@ -18,3 +18,4 @@
 *.bak*
 
 .fake
+websharper.log
