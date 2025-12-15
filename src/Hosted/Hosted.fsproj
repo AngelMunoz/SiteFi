@@ -30,7 +30,7 @@
     <PackageReference Include="YamlDotNet" Version="8.0.0" />
   </ItemGroup>
 
-  <Target Name="Webcompile" BeforeTargets="BeforeBuild">
+  <Target Name="Webcompile" AfterTargets="Build">
     <Exec Command="pnpm run build" WorkingDirectory="$(MSBuildProjectDirectory)" />
   </Target>
 
