@@ -31,6 +31,10 @@
   --border: #33261e;
   --shadow: 4px 4px 0 var(--border);
   --code-bg: #efe6d5;
+  --tok-string: #9a6a2f;
+  --tok-number: #b3552e;
+  --tok-type: #5f7a33;
+  --tok-deletion: #a63a3a;
   --serif: ui-serif, Georgia, "Times New Roman", serif;
   --sans:
     system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, sans-serif;
@@ -49,6 +53,10 @@
     --link: #2dd4bf;
     --border: #4a3b2e;
     --code-bg: #171310;
+    --tok-string: #d9a05b;
+    --tok-number: #e08a5a;
+    --tok-type: #a8bf6e;
+    --tok-deletion: #d97a6a;
   }
 }
 
@@ -63,6 +71,10 @@
   --link: #2dd4bf;
   --border: #4a3b2e;
   --code-bg: #171310;
+  --tok-string: #d9a05b;
+  --tok-number: #e08a5a;
+  --tok-type: #a8bf6e;
+  --tok-deletion: #d97a6a;
 }
 
 * {
@@ -560,6 +572,11 @@ main {
 
 /* ---------- highlight.js token palette (matches the theme) ---------- */
 
+.hljs {
+  color: var(--fg);
+  background: transparent;
+}
+
 .hljs-keyword,
 .hljs-selector-tag,
 .hljs-meta {
@@ -570,21 +587,7 @@ main {
 .hljs-string,
 .hljs-regexp,
 .hljs-addition {
-  color: #9a6a2f;
-}
-
-[data-theme="dark"] .hljs-string,
-[data-theme="dark"] .hljs-regexp,
-[data-theme="dark"] .hljs-addition {
-  color: #d9a05b;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .hljs-string,
-  :root:not([data-theme="light"]) .hljs-regexp,
-  :root:not([data-theme="light"]) .hljs-addition {
-    color: #d9a05b;
-  }
+  color: var(--tok-string);
 }
 
 .hljs-comment,
@@ -595,14 +598,62 @@ main {
 
 .hljs-number,
 .hljs-literal,
-.hljs-built_in {
-  color: #b3552e;
+.hljs-built_in,
+.hljs-variable.constant_ {
+  color: var(--tok-number);
 }
 
+/* function names, type declarations, attribute/annotation names */
 .hljs-title,
 .hljs-name,
-.hljs-attr {
+.hljs-attr,
+.hljs-selector-id,
+.hljs-selector-class {
   color: var(--link);
+}
+
+/* primitive types (int, string, ...), generic params ('T, ^T) */
+.hljs-type,
+.hljs-symbol,
+.class_,
+.hljs-selector-attr,
+.hljs-selector-pseudo {
+  color: var(--tok-type);
+}
+
+/* keep operators and punctuation quiet so keywords stand out */
+.hljs-operator,
+.hljs-punctuation,
+.hljs-bullet {
+  color: var(--muted);
+}
+
+/* interpolation holes and plain identifiers stay at body color */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-subst {
+  color: var(--fg);
+}
+
+.hljs-section {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.hljs-deletion {
+  color: var(--tok-deletion);
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: 700;
+}
+
+.hljs-formula {
+  background: var(--bg-alt);
 }
 
 /* ---------- responsive ---------- */
