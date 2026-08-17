@@ -2,13 +2,6 @@
   "version": 1,
   "isRoot": true,
   "tools": {
-    "fantomas": {
-      "version": "7.0.5",
-      "commands": [
-        "fantomas"
-      ],
-      "rollForward": false
-    },
     "dotnet-serve": {
       "version": "1.10.193",
       "commands": [
